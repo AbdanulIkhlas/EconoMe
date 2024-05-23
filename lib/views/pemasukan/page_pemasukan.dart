@@ -41,11 +41,12 @@ class _PagePemasukanState extends State<PagePemasukan> {
   //cek jumlah total uang
   Future<void> getJmlUang() async {
     var checkJmlUang = await databaseHelper.getJmlPemasukan();
+    var jmlPengeluaran = await databaseHelper.getJmlPengeluaran();
     setState(() {
       if (checkJmlUang == 0) {
         strJmlUang = 0;
       } else {
-        strJmlUang = checkJmlUang;
+        strJmlUang = checkJmlUang - jmlPengeluaran ;
       }
     });
   }

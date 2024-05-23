@@ -44,6 +44,7 @@ class DatabaseHelper {
   }
 
   //insert ke database
+  /// Fungsi ini digunakan untuk memasukkan data ke database.
   Future<int?> saveData(ModelDatabase modelDatabase) async {
     var dbClient = await checkDB;
     return await dbClient!.insert(tableName, modelDatabase.toMap());
@@ -122,5 +123,5 @@ class DatabaseHelper {
     return await dbClient!.
     delete(tableName, where: '$columnId = ? and $columnTipe = ?', whereArgs: [id, 'pengeluaran']);
   }
-
 }
+
