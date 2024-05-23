@@ -1,2 +1,2 @@
 # EconoMe
-Aplikasi Manajemen Keuangan | Tugas TPM | Semester 6
+Aplikasi Manajemen Keuangan
