@@ -289,3 +289,24 @@ class _PagePemasukanState extends State<PagePemasukan> {
   }
 
 }
+
+// trailing: Row(
+//                         mainAxisSize: MainAxisSize.min,
+//                         children: [
+//                           IconButton(
+//                             icon: Icon(Icons.edit,
+//                                 color: transaction.tipe == 'pengeluaran'
+//                                     ? Colors.red
+//                                     : Colors.green),
+//                             onPressed: () {
+//                               // Navigate to edit transaction page
+//                             },
+//                           ),
+//                           IconButton(
+//                             icon: Icon(Icons.delete, color: Colors.red),
+//                             onPressed: () {
+//                               // Show delete confirmation dialog
+//                             },
+//                           ),
+//                         ],
+//                       ),

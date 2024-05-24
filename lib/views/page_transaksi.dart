@@ -37,7 +37,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
       listTransactions.addAll(
           expenseTransactions!.map((data) => FinancialModel.fromMap(data)));
       // Sort transactions by date in descending order
-       listTransactions.sort((a, b) => b.tanggal!.compareTo(a.tanggal!));
+      listTransactions.sort((a, b) => b.tanggal!.compareTo(a.tanggal!));
 
       totalIncome = calculateTotalIncome(listTransactions);
       totalExpense = calculateTotalExpense(listTransactions);
@@ -128,8 +128,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Color(
-                    0xFF585752), // Ganti dengan warna latar belakang yang diinginkan
+                color: Color(0xFF585752),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.5),
@@ -218,30 +217,55 @@ class _PageTransaksiState extends State<PageTransaksi> {
                   onTap: () {
                     navigateToDetail(context, transaction);
                   },
-                  child: Card(
-                    margin: const EdgeInsets.all(10),
-                    clipBehavior: Clip.antiAlias,
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    color: Colors.white,
-                    child: ListTile(
-                      title: Text(transaction.keterangan!,
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black)),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                              'Jumlah Uang: ${CurrencyFormat.convertToIdr(int.parse(transaction.jml_uang!))}',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.black)),
-                          Text('Tanggal: ${transaction.tanggal}',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.black)),
-                        ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                    child: Card(
+                      margin: const EdgeInsets.all(10),
+                      clipBehavior: Clip.antiAlias,
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(color: Color(0xFFa0a08d)),
+                      ),
+                      color: Color(0xFF424242),
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  transaction.keterangan!,
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFFfefad4),
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  '${transaction.tanggal}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFFfefad4),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              ' ${CurrencyFormat.convertToIdr(int.parse(transaction.jml_uang!))}',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                                color: transaction.tipe == 'pengeluaran'
+                                    ? Colors.red
+                                    : Colors.green,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
