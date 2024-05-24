@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './views/pemasukan/page_pemasukan.dart';
 import './views/pengeluaran/page_pengeluaran.dart';
 import './views/bottom_navbar.dart';
+import 'controllers/initializer.dart';
 
 // Definisikan warna utama
 const int primaryColorHex = 0xFF5c5c54;
@@ -69,8 +70,8 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: BottomNavbar(),
-      // home: Initializer(),
+      // home: BottomNavbar(),
+      home: Initializer(),
     );
   }
 }

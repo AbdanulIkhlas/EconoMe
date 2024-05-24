@@ -7,17 +7,17 @@ class DatabaseHelper {
   static Database? _database;
 
   //inisialisasi beberapa variabel yang dibutuhkan
-  final String finacialTable = 'tbl_keuangan';
-  final String financialId = 'id';
-  final String financialTipe = 'tipe';
-  final String financialKet = 'keterangan';
-  final String financialJmlUang = 'jml_uang';
-  final String financialTgl = 'tanggal';
+  static const String finacialTable = 'tbl_keuangan';
+  static const String financialId = 'id';
+  static const String financialTipe = 'tipe';
+  static const String financialKet = 'keterangan';
+  static const String financialJmlUang = 'jml_uang';
+  static const String financialTgl = 'tanggal';
 
-  final String userTable = 'tbl_user';
-  final String userId = 'id';
-  final String username = 'username';
-  final String password = 'password';
+  static const String userTable = 'tbl_user';
+  static const String userId = 'id';
+  static const String username = 'username';
+  static const String password = 'password';
 
   DatabaseHelper._internal();
 
