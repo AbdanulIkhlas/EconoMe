@@ -1,11 +1,11 @@
-class ModelDatabase {
+class FinancialModel {
   int? id;
   String? tipe;
   String? keterangan;
   String? jml_uang;
   String? tanggal;
 
-  ModelDatabase({this.id, this.tipe, this.keterangan, this.jml_uang, this.tanggal});
+  FinancialModel({this.id, this.tipe, this.keterangan, this.jml_uang, this.tanggal});
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
@@ -20,7 +20,7 @@ class ModelDatabase {
     return map;
   }
 
-  ModelDatabase.fromMap(Map<String, dynamic> map) {
+  FinancialModel.fromMap(Map<String, dynamic> map) {
     this.id = map['id'];
     this.tipe = map['tipe'];
     this.keterangan = map['keterangan'];

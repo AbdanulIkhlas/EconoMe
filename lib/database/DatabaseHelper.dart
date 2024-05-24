@@ -1,4 +1,4 @@
-import '../model/model_database.dart';
+import '../model/financial_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -63,9 +63,9 @@ class DatabaseHelper {
 
 
   //insert ke database
-  Future<int?> saveData(ModelDatabase modelDatabase) async {
+  Future<int?> saveData(FinancialModel financialModel) async {
     var dbClient = await checkDB;
-    return await dbClient!.insert(finacialTable, modelDatabase.toMap());
+    return await dbClient!.insert(finacialTable, financialModel.toMap());
   }
 
   //read data pemasukan
@@ -101,17 +101,17 @@ class DatabaseHelper {
   }
 
   //update database pemasukan
-  Future<int?> updateDataPemasukan(ModelDatabase modelDatabase) async {
+  Future<int?> updateDataPemasukan(FinancialModel financialModel) async {
     var dbClient = await checkDB;
-    return await dbClient!.update(finacialTable, modelDatabase.toMap(),
-        where: '$financialId = ? and $financialTipe = ?', whereArgs: [modelDatabase.id, 'pemasukan']);
+    return await dbClient!.update(finacialTable, financialModel.toMap(),
+        where: '$financialId = ? and $financialTipe = ?', whereArgs: [financialModel.id, 'pemasukan']);
   }
 
   //update database pengeluaran
-  Future<int?> updateDataPengeluaran(ModelDatabase modelDatabase) async {
+  Future<int?> updateDataPengeluaran(FinancialModel financialModel) async {
     var dbClient = await checkDB;
-    return await dbClient!.update(finacialTable, modelDatabase.toMap(),
-        where: '$financialId = ? and $financialTipe = ?', whereArgs: [modelDatabase.id, 'pengeluaran']);
+    return await dbClient!.update(finacialTable, financialModel.toMap(),
+        where: '$financialId = ? and $financialTipe = ?', whereArgs: [financialModel.id, 'pengeluaran']);
   }
 
   //cek database pemasukan

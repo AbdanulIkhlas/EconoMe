@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../database/DatabaseHelper.dart';
-import '../../model/model_database.dart';
+import '../../model/financial_model.dart';
 import 'package:intl/intl.dart';
 
 class PageInputPengeluaran extends StatefulWidget {
-  final ModelDatabase? modelDatabase;
+  final FinancialModel? financialModel;
 
-  PageInputPengeluaran({this.modelDatabase});
+  PageInputPengeluaran({this.financialModel});
 
   @override
   _PageInputPengeluaranState createState() => _PageInputPengeluaranState();
@@ -22,11 +22,11 @@ class _PageInputPengeluaranState extends State<PageInputPengeluaran> {
   @override
   void initState() {
     keterangan = TextEditingController(
-        text: widget.modelDatabase == null ? '' : widget.modelDatabase!.keterangan);
+        text: widget.financialModel == null ? '' : widget.financialModel!.keterangan);
     tanggal = TextEditingController(
-        text: widget.modelDatabase == null ? '' : widget.modelDatabase!.tanggal);
+        text: widget.financialModel == null ? '' : widget.financialModel!.tanggal);
     jml_uang = TextEditingController(
-        text: widget.modelDatabase == null ? '' : widget.modelDatabase!.jml_uang);
+        text: widget.financialModel == null ? '' : widget.financialModel!.jml_uang);
     super.initState();
   }
 
@@ -154,7 +154,7 @@ class _PageInputPengeluaranState extends State<PageInputPengeluaran> {
                       }
                     },
                     child: Center(
-                      child: (widget.modelDatabase == null)
+                      child: (widget.financialModel == null)
                           ? Text('Tambah Data', style: TextStyle(fontSize: 14, color: Colors.white),)
                           : Text('Update Data', style: TextStyle(fontSize: 14, color: Colors.white),),
                     ),
@@ -169,10 +169,10 @@ class _PageInputPengeluaranState extends State<PageInputPengeluaran> {
   }
 
   Future<void> upsertData() async {
-    if (widget.modelDatabase != null) {
+    if (widget.financialModel != null) {
       //update
-      await databaseHelper.updateDataPengeluaran(ModelDatabase.fromMap({
-        'id': widget.modelDatabase!.id,
+      await databaseHelper.updateDataPengeluaran(FinancialModel.fromMap({
+        'id': widget.financialModel!.id,
         'tipe': 'pengeluaran',
         'keterangan': keterangan!.text,
         'jml_uang': jml_uang!.text,
@@ -181,7 +181,7 @@ class _PageInputPengeluaranState extends State<PageInputPengeluaran> {
       Navigator.pop(context, 'update');
     } else {
       //insert
-      await databaseHelper.saveData(ModelDatabase(
+      await databaseHelper.saveData(FinancialModel(
         tipe: 'pengeluaran',
         keterangan: keterangan!.text,
         jml_uang: jml_uang!.text,
