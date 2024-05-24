@@ -3,8 +3,8 @@ import 'package:path/path.dart';
 import '../../database/DatabaseHelper.dart';
 import '../../decoration/format_rupiah.dart';
 import '../../model/financial_model.dart';
-import 'pemasukan/page_input_pemasukan.dart';
-import 'pengeluaran/page_input_pengeluaran.dart';
+import 'page_input_pemasukan.dart';
+import 'page_input_pengeluaran.dart';
 import 'page_detail_transaksi.dart';
 
 class PageTransaksi extends StatefulWidget {
@@ -36,6 +36,8 @@ class _PageTransaksiState extends State<PageTransaksi> {
           incomeTransactions!.map((data) => FinancialModel.fromMap(data)));
       listTransactions.addAll(
           expenseTransactions!.map((data) => FinancialModel.fromMap(data)));
+      // Sort transactions by date in descending order
+       listTransactions.sort((a, b) => b.tanggal!.compareTo(a.tanggal!));
 
       totalIncome = calculateTotalIncome(listTransactions);
       totalExpense = calculateTotalExpense(listTransactions);
@@ -60,7 +62,8 @@ class _PageTransaksiState extends State<PageTransaksi> {
     return totalIncome - totalExpense;
   }
 
-  Future<void> navigateToDetail(BuildContext context, FinancialModel financialModel) async {
+  Future<void> navigateToDetail(
+      BuildContext context, FinancialModel financialModel) async {
     var result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -73,13 +76,50 @@ class _PageTransaksiState extends State<PageTransaksi> {
     }
   }
 
+  Future<void> navigateToAddPemasukan(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PageInputPemasukan(),
+      ),
+    );
+    getTransactions();
+  }
+
+  Future<void> navigateToAddPengeluaran(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PageInputPengeluaran(),
+      ),
+    );
+    getTransactions();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('EconoMe',
-            style: TextStyle(fontSize: 30, color: Colors.white)),
-        backgroundColor: Color(0xFFa7a597),
+        backgroundColor: Color(0xFF585752),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Image.asset(
+                'assets/text-logo.png',
+                height: 30,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Image.asset(
+                'assets/logo.png',
+                height: 60,
+              ),
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -88,7 +128,8 @@ class _PageTransaksiState extends State<PageTransaksi> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Color(0xFFa7a597),
+                color: Color(
+                    0xFF585752), // Ganti dengan warna latar belakang yang diinginkan
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.5),
@@ -98,42 +139,71 @@ class _PageTransaksiState extends State<PageTransaksi> {
                   ),
                 ],
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text('Total Pemasukan',
-                      style: TextStyle(
-                          fontSize: 16,
+                  Column(
+                    children: [
+                      Text(
+                        'Pemasukan',
+                        style: TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white)),
-                  Text(CurrencyFormat.convertToIdr(totalIncome),
-                      style: TextStyle(
-                          fontSize: 24,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        CurrencyFormat.convertToIdr(totalIncome),
+                        style: TextStyle(
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white)),
-                  SizedBox(height: 20),
-                  Text('Total Pengeluaran',
-                      style: TextStyle(
-                          fontSize: 16,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        'Pengeluaran',
+                        style: TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white)),
-                  Text(CurrencyFormat.convertToIdr(totalExpense),
-                      style: TextStyle(
-                          fontSize: 24,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        CurrencyFormat.convertToIdr(totalExpense),
+                        style: TextStyle(
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white)),
-                  SizedBox(height: 20),
-                  Text('Saldo',
-                      style: TextStyle(
-                          fontSize: 16,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        'Saldo',
+                        style: TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white)),
-                  Text(CurrencyFormat.convertToIdr(calculateBalance()),
-                      style: TextStyle(
-                          fontSize: 24,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        CurrencyFormat.convertToIdr(calculateBalance()),
+                        style: TextStyle(
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white)),
+                          color: calculateBalance() >= 0
+                              ? Colors.green
+                              : Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -203,24 +273,14 @@ class _PageTransaksiState extends State<PageTransaksi> {
               TextButton(
                 onPressed: () {
                   Navigator.pop(modalContext); // Gunakan modalContext di sini
-                  Navigator.push(
-                    modalContext, // Gunakan modalContext di sini
-                    MaterialPageRoute(
-                      builder: (context) => PageInputPemasukan(),
-                    ),
-                  );
+                  navigateToAddPemasukan(context);
                 },
                 child: Text('Input Pemasukan'),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(modalContext); // Gunakan modalContext di sini
-                  Navigator.push(
-                    modalContext, // Gunakan modalContext di sini
-                    MaterialPageRoute(
-                      builder: (context) => PageInputPengeluaran(),
-                    ),
-                  );
+                  navigateToAddPengeluaran(context);
                 },
                 child: Text('Input Pengeluaran'),
               ),

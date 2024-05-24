@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../database/DatabaseHelper.dart';
-import '../../model/financial_model.dart';
+import '../database/DatabaseHelper.dart';
+import '../model/financial_model.dart';
 import 'package:intl/intl.dart';
 
 class PageInputPengeluaran extends StatefulWidget {

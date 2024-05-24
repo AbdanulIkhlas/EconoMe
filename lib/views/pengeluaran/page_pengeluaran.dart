@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../database/DatabaseHelper.dart';
 import '../../decoration/format_rupiah.dart';
 import '../../model/financial_model.dart';
-import '../pengeluaran/page_input_pengeluaran.dart';
+import '../page_input_pengeluaran.dart';
 
 class PagePengeluaran extends StatefulWidget {
   const PagePengeluaran({Key? key}) : super(key: key);

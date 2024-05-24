@@ -11,7 +11,26 @@ class DetailTransaksi extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detail Transaksi'),
+        backgroundColor: Color(0xFF585752),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Image.asset(
+                'assets/text-logo.png',
+                height: 30,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Image.asset(
+                'assets/logo.png',
+                height: 60,
+              ),
+            ),
+          ],
+        ),
       ),
       body: Container(
         padding: EdgeInsets.all(20),

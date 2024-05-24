@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../database/DatabaseHelper.dart';
-import '../../model/financial_model.dart';
+import '../database/DatabaseHelper.dart';
+import '../model/financial_model.dart';
 import 'package:intl/intl.dart';
-import '../bottom_navbar.dart';
+import 'bottom_navbar.dart';
 
 class PageInputPemasukan extends StatefulWidget {
   final FinancialModel? financialModel;
