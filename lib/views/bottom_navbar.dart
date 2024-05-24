@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pemasukan/page_pemasukan.dart';
 import 'pengeluaran/page_pengeluaran.dart';
+import 'page_transaksi.dart';
 
 class BottomNavbar extends StatefulWidget {
   int selectedIndex;
@@ -14,6 +15,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
   int _selectedIndex = 0;
 
   static List<Widget> _widgetOptions = <Widget>[
+    PageTransaksi(),
     PagePemasukan(),
     PagePengeluaran(),
   ];
@@ -38,6 +40,10 @@ class _BottomNavbarState extends State<BottomNavbar> {
       ),
       bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.request_quote),
+              label: 'Transaksi',
+            ),
             BottomNavigationBarItem(
               icon: Icon(Icons.archive_outlined),
               label: 'Pemasukan',

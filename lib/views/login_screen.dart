@@ -13,29 +13,30 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF424242),
-      // appBar: AppBar(
-      //   title: Padding(
-      //     padding: EdgeInsets.symmetric(vertical: 10),
-      //     child: Image.asset(
-      //       'assets/logo.png',
-      //       height: 60,
-      //     ),
-      //   ),
-      //   backgroundColor: Color(0xFF585752),
-      //   centerTitle: true,
-      // ),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF585752),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Image.asset(
+                'assets/text-logo.png',
+                height: 30,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Image.asset(
+                'assets/logo.png',
+                height: 60,
+              ),
+            ),
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
           child: Column(children: [
-        Container(
-          height: 130,
-          width: double.infinity,
-          color: Color(0xFF585752),
-          padding: EdgeInsets.all(20),
-          child: Image.asset(
-            'assets/econome-logo.png',
-            height: 80,
-          ),
-        ),
         Padding(
           padding: EdgeInsets.all(16.0),
           child: Form(

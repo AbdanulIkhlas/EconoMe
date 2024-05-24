@@ -114,6 +114,12 @@ class DatabaseHelper {
         where: '$financialId = ? and $financialTipe = ?', whereArgs: [financialModel.id, 'pengeluaran']);
   }
 
+  Future<int?> updateData(FinancialModel financialModel, String type) async {
+    var dbClient = await checkDB;
+    return await dbClient!.update(finacialTable, financialModel.toMap(),
+        where: '$financialId = ? and $financialTipe = ?', whereArgs: [financialModel.id, type]);
+  }
+
   //cek database pemasukan
   Future<int?> cekDataPemasukan() async {
     var dbClient = await checkDB;
@@ -140,6 +146,12 @@ class DatabaseHelper {
     var dbClient = await checkDB;
     return await dbClient!.
     delete(finacialTable, where: '$financialId = ? and $financialTipe = ?', whereArgs: [id, 'pengeluaran']);
+  }
+
+  Future<int?> deleteTransaksi(int id, String type) async {
+    var dbClient = await checkDB;
+    return await dbClient!.
+    delete(finacialTable, where: '$financialId = ? and $financialTipe = ?', whereArgs: [id, type]);
   }
 
 }
