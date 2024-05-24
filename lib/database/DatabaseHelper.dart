@@ -7,12 +7,17 @@ class DatabaseHelper {
   static Database? _database;
 
   //inisialisasi beberapa variabel yang dibutuhkan
-  final String tableName = 'tbl_keuangan';
-  final String columnId = 'id';
-  final String columnTipe = 'tipe';
-  final String columnKet = 'keterangan';
-  final String columnJmlUang = 'jml_uang';
-  final String columnTgl = 'tanggal';
+  final String finacialTable = 'tbl_keuangan';
+  final String financialId = 'id';
+  final String financialTipe = 'tipe';
+  final String financialKet = 'keterangan';
+  final String financialJmlUang = 'jml_uang';
+  final String financialTgl = 'tanggal';
+
+  final String userTable = 'tbl_user';
+  final String userId = 'id';
+  final String username = 'username';
+  final String password = 'password';
 
   DatabaseHelper._internal();
 
@@ -29,37 +34,51 @@ class DatabaseHelper {
 
   Future<Database?> _initDB() async {
     String databasePath = await getDatabasesPath();
-    String path = join(databasePath, 'keuangan.db');
+    String path = join(databasePath, 'econome.db');
     return await openDatabase(path, version: 1, onCreate: _onCreate);
   }
 
   //membuat tabel dan field-fieldnya
   Future<void> _onCreate(Database db, int version) async {
-    var sql = "CREATE TABLE $tableName($columnId INTEGER PRIMARY KEY, "
-        "$columnTipe TEXT,"
-        "$columnKet TEXT,"
-        "$columnJmlUang TEXT,"
-        "$columnTgl TEXT)";
+    var sql = '''
+    CREATE TABLE $finacialTable (
+      $financialId INTEGER PRIMARY KEY, 
+      $financialTipe TEXT,
+      $financialKet TEXT,
+      $financialJmlUang TEXT,
+      $financialTgl TEXT
+    )
+  ''';
     await db.execute(sql);
+
+    var userSql = '''
+    CREATE TABLE $userTable (
+      $userId INTEGER PRIMARY KEY, 
+      $username TEXT,
+      $password TEXT
+    )
+  ''';
+    await db.execute(userSql);
   }
+
 
   //insert ke database
   Future<int?> saveData(ModelDatabase modelDatabase) async {
     var dbClient = await checkDB;
-    return await dbClient!.insert(tableName, modelDatabase.toMap());
+    return await dbClient!.insert(finacialTable, modelDatabase.toMap());
   }
 
   //read data pemasukan
   Future<List?> getDataPemasukan() async {
     var dbClient = await checkDB;
-    var result = await dbClient!.rawQuery('SELECT * FROM $tableName WHERE $columnTipe = ?', ['pemasukan']);
+    var result = await dbClient!.rawQuery('SELECT * FROM $finacialTable WHERE $financialTipe = ?', ['pemasukan']);
     return result.toList();
   }
 
   //read data pengeluaran
   Future<List?> getDataPengeluaran() async {
     var dbClient = await checkDB;
-    var result = await dbClient!.rawQuery('SELECT * FROM $tableName WHERE $columnTipe = ?', ['pengeluaran']);
+    var result = await dbClient!.rawQuery('SELECT * FROM $finacialTable WHERE $financialTipe = ?', ['pengeluaran']);
     return result.toList();
   }
 
@@ -67,7 +86,7 @@ class DatabaseHelper {
   Future<int> getJmlPemasukan() async{
     var dbClient = await checkDB;
     var queryResult = await dbClient!.
-    rawQuery('SELECT SUM(jml_uang) AS TOTAL from $tableName WHERE $columnTipe = ?', ['pemasukan']);
+    rawQuery('SELECT SUM(jml_uang) AS TOTAL from $finacialTable WHERE $financialTipe = ?', ['pemasukan']);
     int total = int.parse(queryResult[0]['TOTAL'].toString());
     return total;
   }
@@ -76,7 +95,7 @@ class DatabaseHelper {
   Future<int> getJmlPengeluaran() async{
     var dbClient = await checkDB;
     var queryResult = await dbClient!.
-    rawQuery('SELECT SUM(jml_uang) AS TOTAL from $tableName WHERE $columnTipe = ?', ['pengeluaran']);
+    rawQuery('SELECT SUM(jml_uang) AS TOTAL from $finacialTable WHERE $financialTipe = ?', ['pengeluaran']);
     int total = int.parse(queryResult[0]['TOTAL'].toString());
     return total;
   }
@@ -84,43 +103,43 @@ class DatabaseHelper {
   //update database pemasukan
   Future<int?> updateDataPemasukan(ModelDatabase modelDatabase) async {
     var dbClient = await checkDB;
-    return await dbClient!.update(tableName, modelDatabase.toMap(),
-        where: '$columnId = ? and $columnTipe = ?', whereArgs: [modelDatabase.id, 'pemasukan']);
+    return await dbClient!.update(finacialTable, modelDatabase.toMap(),
+        where: '$financialId = ? and $financialTipe = ?', whereArgs: [modelDatabase.id, 'pemasukan']);
   }
 
   //update database pengeluaran
   Future<int?> updateDataPengeluaran(ModelDatabase modelDatabase) async {
     var dbClient = await checkDB;
-    return await dbClient!.update(tableName, modelDatabase.toMap(),
-        where: '$columnId = ? and $columnTipe = ?', whereArgs: [modelDatabase.id, 'pengeluaran']);
+    return await dbClient!.update(finacialTable, modelDatabase.toMap(),
+        where: '$financialId = ? and $financialTipe = ?', whereArgs: [modelDatabase.id, 'pengeluaran']);
   }
 
   //cek database pemasukan
   Future<int?> cekDataPemasukan() async {
     var dbClient = await checkDB;
     return Sqflite.firstIntValue(await dbClient!.
-    rawQuery('SELECT COUNT(*) FROM $tableName WHERE $columnTipe = ?', ['pemasukan']));
+    rawQuery('SELECT COUNT(*) FROM $finacialTable WHERE $financialTipe = ?', ['pemasukan']));
   }
 
   //cek database pengeluaran
   Future<int?> cekDataPengeluaran() async {
     var dbClient = await checkDB;
     return Sqflite.firstIntValue(await dbClient!.
-    rawQuery('SELECT COUNT(*) FROM $tableName WHERE $columnTipe = ?', ['pengeluaran']));
+    rawQuery('SELECT COUNT(*) FROM $finacialTable WHERE $financialTipe = ?', ['pengeluaran']));
   }
 
   //hapus database pemasukan
   Future<int?> deletePemasukan(int id) async {
     var dbClient = await checkDB;
     return await dbClient!.
-    delete(tableName, where: '$columnId = ? and $columnTipe = ?', whereArgs: [id, 'pemasukan']);
+    delete(finacialTable, where: '$financialId = ? and $financialTipe = ?', whereArgs: [id, 'pemasukan']);
   }
 
   //hapus database pengeluaran
   Future<int?> deleteDataPengeluaran(int id) async {
     var dbClient = await checkDB;
     return await dbClient!.
-    delete(tableName, where: '$columnId = ? and $columnTipe = ?', whereArgs: [id, 'pengeluaran']);
+    delete(finacialTable, where: '$financialId = ? and $financialTipe = ?', whereArgs: [id, 'pengeluaran']);
   }
 
 }

@@ -97,6 +97,13 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Color(0xFFa7a597),
+          title: Text(
+            'EconoMe',
+            style: const TextStyle(fontSize: 30, color: Colors.white),
+          ),
+        ),
       body: SingleChildScrollView(
         child: Column(
           children: [
