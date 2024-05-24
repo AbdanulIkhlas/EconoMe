@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'pemasukan/page_pemasukan.dart';
 import 'pengeluaran/page_pengeluaran.dart';
 import 'page_transaksi.dart';
 
 class BottomNavbar extends StatefulWidget {
-  int selectedIndex;
+  final int selectedIndex;
+
   BottomNavbar({this.selectedIndex = 0});
+
   @override
   _BottomNavbarState createState() => _BottomNavbarState();
 }
@@ -39,26 +40,32 @@ class _BottomNavbarState extends State<BottomNavbar> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.request_quote),
-              label: 'Transaksi',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.archive_outlined),
-              label: 'Pemasukan',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.unarchive_outlined),
-              label: 'Pengeluaran',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.black26,
-          backgroundColor: Color(0xFFa7a597),
-          onTap: _onItemTapped,
-        ),
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: _selectedIndex == 0
+                ? Icon(Icons.request_quote)
+                : Icon(Icons.request_quote_outlined),
+            label: 'Transaksi',
+          ),
+          BottomNavigationBarItem(
+            icon: _selectedIndex == 1
+                ? Icon(Icons.archive)
+                : Icon(Icons.archive_outlined),
+            label: 'Pemasukan',
+          ),
+          BottomNavigationBarItem(
+            icon: _selectedIndex == 2
+                ? Icon(Icons.unarchive)
+                : Icon(Icons.unarchive_outlined),
+            label: 'Pengeluaran',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Color(0xFFfefad4),
+        unselectedItemColor: Color(0xFFadaa9c),
+        backgroundColor: Color(0xFF585752),
+        onTap: _onItemTapped,
+      ),
     );
   }
 }
