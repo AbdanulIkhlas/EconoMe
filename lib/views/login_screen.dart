@@ -12,20 +12,31 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFe7c197),
-      appBar: AppBar(
-        title: Padding(
-          padding: EdgeInsets.symmetric(vertical: 10),
+      backgroundColor: Color(0xFF424242),
+      // appBar: AppBar(
+      //   title: Padding(
+      //     padding: EdgeInsets.symmetric(vertical: 10),
+      //     child: Image.asset(
+      //       'assets/logo.png',
+      //       height: 60,
+      //     ),
+      //   ),
+      //   backgroundColor: Color(0xFF585752),
+      //   centerTitle: true,
+      // ),
+      body: SingleChildScrollView(
+          child: Column(children: [
+        Container(
+          height: 130,
+          width: double.infinity,
+          color: Color(0xFF585752),
+          padding: EdgeInsets.all(20),
           child: Image.asset(
-            'assets/logo.png',
-            height: 60,
+            'assets/econome-logo.png',
+            height: 80,
           ),
         ),
-        backgroundColor: Color(0xFFb2855d),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
+        Padding(
           padding: EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
@@ -38,7 +49,7 @@ class LoginScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0b0302),
+                    color: Color(0xFFF0F1DA),
                   ),
                 ),
                 SizedBox(height: 20),
@@ -51,15 +62,15 @@ class LoginScreen extends StatelessWidget {
                   controller: _usernameController,
                   decoration: InputDecoration(
                     labelText: 'Username',
-                    labelStyle: TextStyle(color: Color(0xFF0b0302)),
+                    labelStyle: TextStyle(color: Color(0xFFF0F1DA)),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFb2855d)),
+                      borderSide: BorderSide(color: Color(0xFFa7a597)),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFb2855d)),
+                      borderSide: BorderSide(color: Color(0xFFa7a597)),
                     ),
                   ),
-                  style: TextStyle(color: Color(0xFF0b0302)),
+                  style: TextStyle(color: Color(0xFFF0F1DA)),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a username';
@@ -72,16 +83,16 @@ class LoginScreen extends StatelessWidget {
                   controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    labelStyle: TextStyle(color: Color(0xFF0b0302)),
+                    labelStyle: TextStyle(color: Color(0xFFF0F1DA)),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFb2855d)),
+                      borderSide: BorderSide(color: Color(0xFFa7a597)),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFb2855d)),
+                      borderSide: BorderSide(color: Color(0xFFa7a597)),
                     ),
                   ),
                   obscureText: true,
-                  style: TextStyle(color: Color(0xFF0b0302)),
+                  style: TextStyle(color: Color(0xFFF0F1DA)),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a password';
@@ -109,7 +120,7 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      ])),
     );
   }
 }

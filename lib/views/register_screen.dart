@@ -12,129 +12,147 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFe7c197),
-      appBar: AppBar(
-        title: Padding(
-          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-          child: Image.asset(
-            'assets/logo.png',
-            height: 60,
-          ),
-        ),
-        backgroundColor: Color(0xFFb2855d),
-        centerTitle: true,
-      ),
+      backgroundColor: Color(0xFF424242),
+      // appBar: AppBar(
+      //   title: Padding(
+      //     padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+      //     child: Image.asset(
+      //       'assets/logo.png',
+      //       height: 80,
+      //     ),
+      //   ),
+      //   backgroundColor: Color(0xFF585752),
+      //   centerTitle: true,
+      // ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(25.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: 40),
-                Text(
-                  'REGISTER',
-                  style: TextStyle(
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF0b0302),
-                  ),
-                ),
-                SizedBox(height: 20),
-                Image.asset(
-                  'assets/regist-illustration.png',
-                  height: 180,
-                ),
-                SizedBox(height: 50),
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: 'Username',
-                    labelStyle: TextStyle(color: Color(0xFF0b0302)),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFb2855d)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFb2855d)),
-                    ),
-                  ),
-                  style: TextStyle(color: Color(0xFF0b0302)),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a username';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    labelStyle: TextStyle(color: Color(0xFF0b0302)),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFb2855d)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFb2855d)),
-                    ),
-                  ),
-                  obscureText: true,
-                  style: TextStyle(color: Color(0xFF0b0302)),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _verifyPasswordController,
-                  decoration: InputDecoration(
-                    labelText: 'Verify Password',
-                    labelStyle: TextStyle(color: Color(0xFF0b0302)),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFb2855d)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFb2855d)),
-                    ),
-                  ),
-                  obscureText: true,
-                  style: TextStyle(color: Color(0xFF0b0302)),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please verify your password';
-                    }
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      final username = _usernameController.text;
-                      final password = _passwordController.text;
-                      _authController.register(context, username, password);
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color(0xFFb2855d), // Warna latar belakang tombol
-                    foregroundColor: Colors.white, // Warna teks tombol
-                  ),
-                  child: Text('Register'),
-                ),
-              ],
+        child: Column(
+          children: [
+            Container(
+              height: 130,
+              width: double.infinity,
+              color: Color(0xFF585752),
+              padding: EdgeInsets.all(20),
+              child:Image.asset(
+                'assets/econome-logo.png',
+                height: 80,
+              ),
             ),
-          ),
+            Padding(
+              padding: EdgeInsets.only(top: 0, left: 25, right: 25, bottom: 25),
+              child: Column(
+                children: [
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 40),
+                        Text(
+                          'REGISTER',
+                          style: TextStyle(
+                            fontSize: 35,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFF0F1DA),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Image.asset(
+                          'assets/regist-illustration.png',
+                          height: 180,
+                        ),
+                        SizedBox(height: 50),
+                        TextFormField(
+                          controller: _usernameController,
+                          decoration: InputDecoration(
+                            labelText: 'Username',
+                            labelStyle: TextStyle(color: Color(0xFFF0F1DA)),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFba7a597)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFba7a597)),
+                            ),
+                          ),
+                          style: TextStyle(color: Color(0xFFF0F1DA)),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a username';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        TextFormField(
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            labelStyle: TextStyle(color: Color(0xFFF0F1DA)),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFba7a597)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFba7a597)),
+                            ),
+                          ),
+                          obscureText: true,
+                          style: TextStyle(color: Color(0xFFF0F1DA)),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a password';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        TextFormField(
+                          controller: _verifyPasswordController,
+                          decoration: InputDecoration(
+                            labelText: 'Verify Password',
+                            labelStyle: TextStyle(color: Color(0xFFF0F1DA)),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFba7a597)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFba7a597)),
+                            ),
+                          ),
+                          obscureText: true,
+                          style: TextStyle(color: Color(0xFFF0F1DA)),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please verify your password';
+                            }
+                            if (value != _passwordController.text) {
+                              return 'Passwords do not match';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              final username = _usernameController.text;
+                              final password = _passwordController.text;
+                              _authController.register(
+                                  context, username, password);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFb2855d),
+                            foregroundColor: Colors.white,
+                          ),
+                          child: Text('Register'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-    );
+);
   }
 }
