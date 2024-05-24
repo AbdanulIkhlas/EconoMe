@@ -76,6 +76,26 @@ class _PageTransaksiState extends State<PageTransaksi> {
     }
   }
 
+  String formatAmount(int amount) {
+    if (amount < (-1000000000)) {
+      return 'Susah Hidup';
+    } else
+    if (amount < 1000000) {
+      return 'Rp ${amount.toString()}';
+    } else if (amount < 1000000000) {
+      double result = amount / 1000000;
+      return 'Rp ${result.toStringAsFixed(0)} Jt';
+    } else if (amount < 1000000000000) {
+      double result = amount / 1000000000;
+      return 'Rp ${result.toStringAsFixed(0)} M';
+    } else {
+      double result = amount / 1000000000000;
+      // kemungkinan kemungkinan
+      return 'Rp ${result.toStringAsFixed(0)} KB';
+    }
+  }
+
+
   Future<void> navigateToAddPemasukan(BuildContext context) async {
     await Navigator.push(
       context,
@@ -99,6 +119,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Color(0xFF424242),
       appBar: AppBar(
         backgroundColor: Color(0xFF585752),
         title: Row(
@@ -152,7 +173,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         ),
                       ),
                       Text(
-                        CurrencyFormat.convertToIdr(totalIncome),
+                        formatAmount(totalIncome),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -172,7 +193,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         ),
                       ),
                       Text(
-                        CurrencyFormat.convertToIdr(totalExpense),
+                        formatAmount(totalExpense),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -192,7 +213,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         ),
                       ),
                       Text(
-                        CurrencyFormat.convertToIdr(calculateBalance()),
+                        formatAmount(calculateBalance()),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -206,6 +227,8 @@ class _PageTransaksiState extends State<PageTransaksi> {
                 ],
               ),
             ),
+
+            
             SizedBox(height: 20),
             ListView.builder(
               physics: NeverScrollableScrollPhysics(),
@@ -236,12 +259,16 @@ class _PageTransaksiState extends State<PageTransaksi> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  transaction.keterangan!,
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFFfefad4),
+                                Container(
+                                  width: 140,
+                                  child: Text(
+                                    transaction.keterangan!,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFFfefad4),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 SizedBox(height: 5),
@@ -254,16 +281,22 @@ class _PageTransaksiState extends State<PageTransaksi> {
                                 ),
                               ],
                             ),
-                            Text(
-                              ' ${CurrencyFormat.convertToIdr(int.parse(transaction.jml_uang!))}',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                color: transaction.tipe == 'pengeluaran'
-                                    ? Colors.red
-                                    : Colors.green,
+                            Container(
+                              width: 130,
+                              child: Text(
+                                formatAmount(int.parse(transaction.jml_uang!)),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: transaction.tipe == 'pengeluaran'
+                                      ? Colors.red
+                                      : Colors.green,
+                                ),
+                                textAlign: TextAlign.right,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
+
                           ],
                         ),
                       ),
@@ -271,6 +304,9 @@ class _PageTransaksiState extends State<PageTransaksi> {
                   ),
                 );
               },
+            ),
+            SizedBox(
+              height: 80.0,
             ),
           ],
         ),
@@ -280,7 +316,8 @@ class _PageTransaksiState extends State<PageTransaksi> {
           _showOptions(context);
         },
         child: Icon(Icons.add),
-        backgroundColor: Color(0xFFa7a597),
+        backgroundColor: Color(0xFF585752),
+        foregroundColor: Color(0xFFfefad4),
       ),
     );
   }
