@@ -6,6 +6,11 @@ import 'page_input_pemasukan.dart';
 import 'page_input_pengeluaran.dart';
 import 'bottom_navbar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../model/timezone_model.dart';
+import '../model/time_model.dart';
+import '../model/currency_model.dart';
+import '../services/api_data_source.dart';
+import '../services/base_network.dart';
 
 class DetailTransaksi extends StatefulWidget {
   final FinancialModel financialModel;
@@ -22,13 +27,77 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
   FinancialModel financialModel = FinancialModel();
   int strJmlUang = 0;
   int strCheckDatabase = 0;
-  String selectedCity = 'MAKASSAR';
+  double selectedRate = 1.0;
+  String selectedCity = 'Europe/London';
   String selectedCurrency = 'USD';
+  List<dynamic> timezones = [];
+  dynamic times = [];
+  Map<String,dynamic> currencies = {};
+  bool _isLoadingTimezone = true;
+  bool _isLoadingCurrency = true;
+
 
   @override
   void initState() {
     super.initState();
     getDatabase();
+    loadTimezones();
+    loadCurrency();
+  }
+
+  void loadTimezones() async {
+    try {
+      List<dynamic> _timezones = await BaseNetwork().fetchTimezone();
+      setState(() {
+        timezones = _timezones;
+        _isLoadingTimezone = false;
+      });
+    } catch (e) {
+      print("error loadTimezone ${e}");
+      setState(() {
+        _isLoadingTimezone = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("error loadTimezone ${e}"),
+      ));
+    }
+  }
+  
+  void loadCurrency() async {
+    try {
+      Map<String,dynamic> _currencies = await BaseNetwork().fetchCurrency();
+      setState(() {
+        currencies = _currencies;
+        _isLoadingCurrency = false;
+      });
+    } catch (e) {
+      print("error loadCurrency ${e}");
+      setState(() {
+        _isLoadingCurrency = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("error loadCurrency ${e}"),
+      ));
+    }
+  }
+
+  Future<dynamic> loadTime(String zone) async {
+    try {
+      dynamic _times = await BaseNetwork().fetchTime(zone);
+      setState(() {
+        times = _times;
+        // _isLoadingCurrency = false;
+      });
+      return _times;
+    } catch (e) {
+      print("error loadTimes ${e}");
+      // setState(() {
+      //   // _isLoadingCurrency = false;
+      // });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("error loadTimes ${e}"),
+      ));
+    }
   }
 
   Future<void> getDatabase() async {
@@ -89,20 +158,20 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
   }
 
   // Function to launch website link in a new tab
-  void _launchLink(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
+  Future<void> _launchURL(String url) async {
+    final Uri _url = Uri.parse(url);
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $url');
     }
   }
 
-  String formatTime(String dateTimeString) {
-    DateTime dateTime = DateTime.parse(dateTimeString);
-    String hour = dateTime.hour.toString().padLeft(2, '0');
-    String minute = dateTime.minute.toString().padLeft(2, '0');
-    return '$hour.$minute WIB';
+
+  String currentTime() {
+    DateTime now = DateTime.now();
+    String currentTime = '${now.hour}:${now.minute}:${now.second}';
+    return currentTime;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -256,27 +325,37 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
               ),
               SizedBox(height: 10),
               Text(
-                formatTime(widget.financialModel.createdAt!),
+                currentTime(),
                 style: TextStyle(color: Colors.white, fontSize: 16),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
-              DropdownButton<String>(
-                value: selectedCity,
-                dropdownColor: Color(0xFF424242),
-                style: TextStyle(color: Color(0xFFF2EFCD)),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedCity = newValue!;
-                  });
-                },
-                items: <String>['MAKASSAR', 'JAYAPURA', 'JAKARTA', 'LONDON']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: <Widget>[
+                    _isLoadingTimezone
+                        ? CircularProgressIndicator()
+                        : DropdownButton<String>(
+                            value: selectedCity,
+                            dropdownColor: Color(0xFF424242),
+                            style: TextStyle(color: Color(0xFFF2EFCD)),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedCity = newValue!;
+                              });
+                            },
+                            items: timezones
+                                .map<DropdownMenuItem<String>>((dynamic value) {
+                              return DropdownMenuItem<String>(
+                                value: value.toString(),
+                                child: Text(value.toString()),
+                              );
+                            }).toList(),
+                          ),
+                    // You can add a similar dropdown for currencies here
+                  ],
+                ),
               ),
               SizedBox(height: 20),
               ElevatedButton(
@@ -284,39 +363,89 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return AlertDialog(
-                        backgroundColor: Color(0xFF424242),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              selectedCity,
-                              style: TextStyle(
-                                color: Color(0xFFF2EFCD),
-                                fontSize: 16,
+                      return FutureBuilder(
+                         // Panggil metode _loadTime dengan parameter selectedCity
+                        future: loadTime(selectedCity),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            // Tampilkan indicator jika sedang loading
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            // Tampilkan pesan error jika gagal memuat data
+                            return AlertDialog(
+                              backgroundColor: Color(0xFF424242),
+                              content: Text(
+                                'Failed to load time data for $selectedCity',
+                                style: TextStyle(color: Colors.red),
                               ),
-                            ),
-                            SizedBox(height: 10),
-                            ElevatedButton(
-                              onPressed: () {
-                                _launchLink(
-                                    'https://www.google.com/search?q=$selectedCity');
-                              },
-                              child: Text('Check'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF424242),
-                                side: BorderSide(
-                                    color: Color.fromARGB(255, 158, 158, 158)),
-                                shadowColor: Colors.black,
-                                elevation: 8,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                minimumSize: Size(double.infinity, 50),
+                            );
+                          } else {
+                            // Tampilkan data jika berhasil dimuat
+                            final Map<String,dynamic> times = snapshot.data!;
+                            final time = times.isNotEmpty ? times : null;
+                            return AlertDialog(
+                              backgroundColor: Color(0xFF424242),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (time != null) ...[
+                                    Text(
+                                      'Date: ${time['date']}',
+                                      style: TextStyle(
+                                          color: Color(0xFFF2EFCD),
+                                          fontSize: 16),
+                                    ),
+                                    Text(
+                                      'Time: ${time['time']}',
+                                      style: TextStyle(
+                                          color: Color(0xFFF2EFCD),
+                                          fontSize: 16),
+                                    ),
+                                    Text(
+                                      'Timezone: ${time['timeZone']}',
+                                      style: TextStyle(
+                                          color: Color(0xFFF2EFCD),
+                                          fontSize: 16),
+                                    ),
+                                    Text(
+                                      'Day of Week: ${time['dayOfWeek']}',
+                                      style: TextStyle(
+                                          color: Color(0xFFF2EFCD),
+                                          fontSize: 16),
+                                    ),
+                                  ] else
+                                    Text(
+                                      'No data available',
+                                      style: TextStyle(
+                                          color: Color(0xFFF2EFCD),
+                                          fontSize: 16),
+                                    ),
+                                  SizedBox(height: 10),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      _launchURL(
+                                          'https://www.google.com/search?q=waktu+sekarang+di+${selectedCity}&sca_esv=274f1da98f794c68&sca_upv=1&rlz=1C1KNTJ_enID969ID969&sxsrf=ADLYWIJ7CGRmr8qNamIZzleQrIr6IcEgrQ%3A1716652008222&ei=6AdSZqaaDbOKnesPm_CX-Ak&ved=0ahUKEwimrpyJk6mGAxUzRWcHHRv4BZ8Q4dUDCBA&uact=5&oq=waktu+sekarang+di+eropa%2Famsterdam&gs_lp=Egxnd3Mtd2l6LXNlcnAiIXdha3R1IHNla2FyYW5nIGRpIGVyb3BhL2Ftc3RlcmRhbTIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYR0iKC1CDAliDAnABeAKQAQCYAQCgAQCqAQC4AQPIAQD4AQGYAgKgAg3CAgoQABiwAxjWBBhHmAMA4gMFEgExIECIBgGQBgiSBwEyoAcA&sclient=gws-wiz-serp');
+                                    },
+                                    child: Text('Check'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Color(0xFF424242),
+                                      side: BorderSide(
+                                          color: Color.fromARGB(
+                                              255, 158, 158, 158)),
+                                      shadowColor: Colors.black,
+                                      elevation: 8,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      minimumSize: Size(double.infinity, 50),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
+                            );
+                          }
+                        },
                       );
                     },
                   );
@@ -338,6 +467,10 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                   ),
                 ),
               ),
+
+              
+              
+              
               SizedBox(height: 20),
               Text(
                 'Konversi Uang:',
@@ -364,9 +497,10 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                 onChanged: (String? newValue) {
                   setState(() {
                     selectedCurrency = newValue!;
+                    selectedRate = currencies[newValue]!;
                   });
                 },
-                items: <String>['USD', 'EUR', 'IDR']
+                items: currencies.keys
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -380,13 +514,32 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                   showDialog(
                     context: context,
                     builder: (context) {
+                      double amount =
+                          double.parse(widget.financialModel.jml_uang!) *
+                              selectedRate;
                       return AlertDialog(
                         backgroundColor: Color(0xFF424242),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              selectedCurrency,
+                              'Selected Currency: $selectedCurrency',
+                              style: TextStyle(
+                                color: Color(0xFFF2EFCD),
+                                fontSize: 16,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Money : Rp ${widget.financialModel.jml_uang!}',
+                              style: TextStyle(
+                                color: Color(0xFFF2EFCD),
+                                fontSize: 16,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Amount: $selectedCurrency $amount',
                               style: TextStyle(
                                 color: Color(0xFFF2EFCD),
                                 fontSize: 16,
@@ -395,8 +548,8 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                             SizedBox(height: 10),
                             ElevatedButton(
                               onPressed: () {
-                                _launchLink(
-                                    'https://www.google.com/search?q=$selectedCurrency');
+                                _launchURL(
+                                    'https://www.google.com/search?q=${widget.financialModel.jml_uang!}+rupiah+berapa+${selectedCurrency}&sca_esv=c6cd4adb8e74364a&sca_upv=1&rlz=1C1KNTJ_enID969ID969&sxsrf=ADLYWIJv3PdcJZPsbpXu2TYezbz55hbn5Q%3A1716649550131&ei=Tv5RZsrOB_fvseMP57Wu-Ak&ved=0ahUKEwjKrY71iamGAxX3d2wGHeeaC58Q4dUDCBA&uact=5&oq=30000+rupiah+berapa+usd&gs_lp=Egxnd3Mtd2l6LXNlcnAiFzMwMDAwIHJ1cGlhaCBiZXJhcGEgdXNkMgYQABgWGB4yCBAAGIAEGKIEMggQABiABBiiBDIIEAAYgAQYogQyCBAAGIAEGKIESNZ0UItcWJRlcAV4AZABAJgB0QGgAaoJqgEFMC42LjK4AQPIAQD4AQGYAgygAtcIwgIKEAAYsAMY1gQYR8ICBBAjGCfCAggQABgHGB4YD8ICBhAAGAgYHsICCBAAGAcYCBgemAMAiAYBkAYIkgcFNS41LjKgB9Ih&sclient=gws-wiz-serp');
                               },
                               child: Text('Check'),
                               style: ElevatedButton.styleFrom(
@@ -434,6 +587,8 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                   ),
                 ),
               ),
+            
+            
             ],
           ),
         ),
