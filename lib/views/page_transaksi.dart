@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import '../../database/DatabaseHelper.dart';
-import '../../decoration/format_rupiah.dart';
 import '../../model/financial_model.dart';
-import 'page_input_pemasukan.dart';
-import 'page_input_pengeluaran.dart';
-import 'page_detail_transaksi.dart';
-import 'package:rxdart/rxdart.dart';
+import '../controllers/transaction_controller.dart';
 
 class PageTransaksi extends StatefulWidget {
   const PageTransaksi({Key? key}) : super(key: key);
@@ -16,126 +10,33 @@ class PageTransaksi extends StatefulWidget {
 }
 
 class _PageTransaksiState extends State<PageTransaksi> {
-  List<FinancialModel> listTransactions = [];
-  DatabaseHelper databaseHelper = DatabaseHelper();
+  final List<FinancialModel> listTransactions = [];
+  final TransactionController _transactionController = TransactionController();
   int totalIncome = 0;
   int totalExpense = 0;
-  int strJmlUang = 0;
-  int strCheckDatabase = 0;
 
   @override
   void initState() {
     super.initState();
-    getDataDatabase();
-    getTransactions();
-  }
-
-  Future<void> getTransactions() async {
-    var incomeTransactions = await databaseHelper.getDataPemasukan();
-    var expenseTransactions = await databaseHelper.getDataPengeluaran();
-
-    setState(() {
-      listTransactions.clear();
-      listTransactions.addAll(
-          incomeTransactions!.map((data) => FinancialModel.fromMap(data)));
-      listTransactions.addAll(
-          expenseTransactions!.map((data) => FinancialModel.fromMap(data)));
-      // Sort transactions by createdAt in descending order
-      listTransactions.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-
-      totalIncome = calculateTotalIncome(listTransactions);
-      totalExpense = calculateTotalExpense(listTransactions);
-    });
-  }
-
-
-  int calculateTotalIncome(List<FinancialModel> transactions) {
-    return transactions
-        .where((transaction) => transaction.tipe == 'pemasukan')
-        .map((transaction) => int.parse(transaction.jml_uang!))
-        .fold(0, (sum, amount) => sum + amount);
-  }
-
-  int calculateTotalExpense(List<FinancialModel> transactions) {
-    return transactions
-        .where((transaction) => transaction.tipe == 'pengeluaran')
-        .map((transaction) => int.parse(transaction.jml_uang!))
-        .fold(0, (sum, amount) => sum + amount);
-  }
-
-  int calculateBalance() {
-    return totalIncome - totalExpense;
-  }
-
-  Future<void> navigateToDetail(
-      BuildContext context, FinancialModel financialModel) async {
-    var result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DetailTransaksi(financialModel: financialModel),
-      ),
+    _transactionController.getTransactions(
+      listTransactions,
+      (income) {
+        setState(() {
+          totalIncome = income;
+        });
+      },
+      (expense) {
+        setState(() {
+          totalExpense = expense;
+        });
+      },
     );
-
-    if (result == 'update') {
-      getTransactions();
-    }
-  }
-
-  String formatAmount(double amount) {
-    if (amount < (-1000000000)) {
-      return 'Susah Hidup';
-    } else if (amount < 1000000) {
-      return CurrencyFormat.convertToIdr(amount);
-    } else if (amount < 1000000000) {
-      double result = amount / 1000000;
-      return CurrencyFormat.convertToIdr(result) + ' Jt';
-    } else if (amount < 1000000000000) {
-      double result = amount / 1000000000;
-      return CurrencyFormat.convertToIdr(result) + ' M';
-    } else {
-      double result = amount / 1000000000000;
-      return CurrencyFormat.convertToIdr(result) + ' KB';
-    }
-  }
-
-
-  Future<void> navigateToAddPemasukan(BuildContext context) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PageInputPemasukan(),
-      ),
-    );
-    getTransactions();
-  }
-
-  Future<void> navigateToAddPengeluaran(BuildContext context) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PageInputPengeluaran(),
-      ),
-    );
-    getTransactions();
-  }
-
-  //cek database ada data atau tidak
-  Future<void> getDataDatabase() async {
-    var checkDB = await databaseHelper.cekDataDatabase();
-    setState(() {
-      if (checkDB == 0) {
-        strCheckDatabase = 0;
-        strJmlUang = 0;
-      } else {
-        strCheckDatabase = checkDB!;
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xFF424242),
+      backgroundColor: Color(0xFF424242),
       appBar: AppBar(
         backgroundColor: Color(0xFF585752),
         title: Row(
@@ -189,7 +90,8 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         ),
                       ),
                       Text(
-                        formatAmount(totalIncome.toDouble()),
+                        _transactionController
+                            .formatAmount(totalIncome.toDouble()),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -209,7 +111,8 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         ),
                       ),
                       Text(
-                        formatAmount(totalExpense.toDouble()),
+                        _transactionController
+                            .formatAmount(totalExpense.toDouble()),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -229,11 +132,15 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         ),
                       ),
                       Text(
-                        formatAmount(calculateBalance().toDouble()),
+                        _transactionController.formatAmount(
+                            _transactionController.calculateBalance(
+                                totalIncome, totalExpense).toDouble()),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: calculateBalance() >= 0
+                          color: _transactionController.calculateBalance(
+                                      totalIncome, totalExpense) >=
+                                  0
                               ? Colors.green
                               : Colors.red,
                         ),
@@ -243,13 +150,11 @@ class _PageTransaksiState extends State<PageTransaksi> {
                 ],
               ),
             ),
-
-            
             SizedBox(height: 20),
-            strCheckDatabase == 0
-            ? 
-            Container(
-                    padding: EdgeInsets.only(left: 10, right: 10, top: 200),
+            listTransactions.isEmpty
+                ? Container(
+                    padding:
+                        EdgeInsets.only(left: 10, right: 10, top: 200),
                     child: Center(
                       child: Text(
                         'Ups, belum ada catatan.\nYuk catat keuangan Kamu!',
@@ -262,81 +167,85 @@ class _PageTransaksiState extends State<PageTransaksi> {
                       ),
                     ),
                   )
-            : ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: listTransactions.length,
-              itemBuilder: (context, index) {
-                FinancialModel transaction = listTransactions[index];
-                return GestureDetector(
-                  onTap: () {
-                    navigateToDetail(context, transaction);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                    child: Card(
-                      margin: const EdgeInsets.all(10),
-                      clipBehavior: Clip.antiAlias,
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(color: Color(0xFFa0a08d)),
-                      ),
-                      color: Color(0xFF424242),
-                      child: Padding(
-                        padding: const EdgeInsets.all(18.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 140,
-                                  child: Text(
-                                    transaction.keterangan!,
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFFfefad4),
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  '${transaction.tanggal}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFFfefad4),
-                                  ),
-                                ),
-                              ],
+                : ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: listTransactions.length,
+                    itemBuilder: (context, index) {
+                      FinancialModel transaction = listTransactions[index];
+                      return GestureDetector(
+                        onTap: () {
+                          _transactionController.navigateToDetail(
+                              context, transaction, _updateTransactions);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                          child: Card(
+                            margin: const EdgeInsets.all(10),
+                            clipBehavior: Clip.antiAlias,
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: BorderSide(color: Color(0xFFa0a08d)),
                             ),
-                            Container(
-                              width: 130,
-                              child: Text(
-                                formatAmount(int.parse(transaction.jml_uang!).toDouble()),
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                  color: transaction.tipe == 'pengeluaran'
-                                      ? Colors.red
-                                      : Colors.green,
-                                ),
-                                textAlign: TextAlign.right,
-                                overflow: TextOverflow.ellipsis,
+                            color: Color(0xFF424242),
+                            child: Padding(
+                              padding: const EdgeInsets.all(18.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 140,
+                                        child: Text(
+                                          transaction.keterangan!,
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFFfefad4),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        '${transaction.tanggal}',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Color(0xFFfefad4),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    width: 130,
+                                    child: Text(
+                                      _transactionController.formatAmount(
+                                          int.parse(transaction.jml_uang!)
+                                              .toDouble()),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: transaction.tipe == 'pengeluaran'
+                                            ? Colors.red
+                                            : Colors.green,
+                                      ),
+                                      textAlign: TextAlign.right,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
             SizedBox(
               height: 80.0,
             ),
@@ -345,7 +254,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showOptions(context);
+          _transactionController.showOptions(context, _updateTransactions);
         },
         child: Icon(Icons.add),
         backgroundColor: Color(0xFF585752),
@@ -354,33 +263,17 @@ class _PageTransaksiState extends State<PageTransaksi> {
     );
   }
 
-  void _showOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext modalContext) {
-        return Container(
-          height: 150,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(modalContext); // Gunakan modalContext di sini
-                  navigateToAddPemasukan(context);
-                },
-                child: Text('Input Pemasukan'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(modalContext); // Gunakan modalContext di sini
-                  navigateToAddPengeluaran(context);
-                },
-                child: Text('Input Pengeluaran'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  void _updateTransactions() {
+    setState(() {
+      _transactionController.getTransactions(
+        listTransactions,
+        (income) {
+          totalIncome = income;
+        },
+        (expense) {
+          totalExpense = expense;
+        },
+      );
+    });
   }
 }

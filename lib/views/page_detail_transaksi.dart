@@ -5,6 +5,7 @@ import '../database/DatabaseHelper.dart';
 import '../decoration/format_rupiah.dart';
 import 'page_input_pemasukan.dart';
 import 'page_input_pengeluaran.dart';
+import 'bottom_navbar.dart';
 
 class DetailTransaksi extends StatefulWidget {
   final FinancialModel financialModel;
@@ -40,6 +41,8 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
     });
   }
 
+
+
   Future<void> deleteData(FinancialModel financialModel) async {
     var result = await databaseHelper.deleteTransaksi(
         financialModel.id!, financialModel.tipe!);
@@ -52,27 +55,33 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
   }
 
   Future<void> editData(
-      BuildContext context, String type, FinancialModel financialModel) async {
+    BuildContext context, String type, FinancialModel financialModel) async {
     if (type == 'pengeluaran') {
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              PageInputPengeluaran(financialModel: financialModel),
-        ),
-      );
+      var result = await Navigator.push(context,
+          MaterialPageRoute(builder: (context) => PageInputPengeluaran(financialModel: financialModel)));
+      if (result == 'update') {
+        await updateData();
+      }
     } else if (type == 'pemasukan') {
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              PageInputPemasukan(financialModel: financialModel),
-        ),
-      );
+      var result = await Navigator.push(context,
+          MaterialPageRoute(builder: (context) => PageInputPemasukan(financialModel: financialModel)));
+      if (result == 'update') {
+        await updateData();
+      }
     }
-    // Memperbarui data yang ditampilkan setelah pengguna mengedit data
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BottomNavbar(),
+      ),
+    );
+  }
+
+  Future<void> updateData() async {
     await getDatabase();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -163,8 +172,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    editData(context, widget.financialModel.tipe!,
-                        widget.financialModel);
+                    editData(context, widget.financialModel.tipe!, widget.financialModel);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
@@ -199,28 +207,42 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
   }
 
   void _confirmDelete(BuildContext context, FinancialModel financialModel) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Hapus Data'),
-        content: Text('Yakin ingin menghapus data ini?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              deleteData(financialModel);
-              Navigator.pop(context);
-            },
-            child: Text('Ya'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Tidak'),
-          ),
-        ],
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: Color(0xFF424242),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        side: BorderSide(color: Color(0xFFF4EFC2)),
       ),
-    );
-  }
+      contentTextStyle: TextStyle(color: Color(0xFFF2EFCD)),
+      title: Text('Hapus Data', style: TextStyle(color: Color(0xFFF2EFCD))),
+      content: Text('Yakin ingin menghapus data ini?', style: TextStyle(color: Color(0xFFF2EFCD))),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            deleteData(financialModel);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BottomNavbar(),
+              ),
+            );
+          },
+          child: Text('Ya', style: TextStyle(color: Color(0xFFF2EFCD))),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Tidak', style: TextStyle(color: Color(0xFFF2EFCD))),
+        ),
+      ],
+      elevation: 8.0, // Adding box shadow
+    ),
+  );
+}
+
+
 }

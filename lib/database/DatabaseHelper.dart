@@ -85,6 +85,13 @@ class DatabaseHelper {
     return result.toList();
   }
 
+  //read semua data finansial
+  Future<List?> getAllDataTransaction() async {
+    var dbClient = await checkDB;
+    var result = await dbClient!.rawQuery('SELECT * FROM $finacialTable ');
+    return result.toList();
+  }
+
   //read data jumlah pemasukan
   Future<int> getJmlPemasukan() async{
     var dbClient = await checkDB;
@@ -108,20 +115,6 @@ class DatabaseHelper {
     return await dbClient!.update(finacialTable, financialModel.toMap(),
         where: '$financialId = ? and $financialTipe = ?', whereArgs: [financialModel.id, type]);
   }
-
-  // //cek database pemasukan
-  // Future<int?> cekDataPemasukan() async {
-  //   var dbClient = await checkDB;
-  //   return Sqflite.firstIntValue(await dbClient!.
-  //   rawQuery('SELECT COUNT(*) FROM $finacialTable WHERE $financialTipe = ?', ['pemasukan']));
-  // }
-
-  // //cek database pengeluaran
-  // Future<int?> cekDataPengeluaran() async {
-  //   var dbClient = await checkDB;
-  //   return Sqflite.firstIntValue(await dbClient!.
-  //   rawQuery('SELECT COUNT(*) FROM $finacialTable WHERE $financialTipe = ?', ['pengeluaran']));
-  // }
 
   //cek row dalam database
   Future<int?> cekDataDatabase() async {
