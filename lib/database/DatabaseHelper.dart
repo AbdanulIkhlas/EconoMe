@@ -13,6 +13,7 @@ class DatabaseHelper {
   static const String financialKet = 'keterangan';
   static const String financialJmlUang = 'jml_uang';
   static const String financialTgl = 'tanggal';
+  static const String financialCreated = 'createdAt';
 
   static const String userTable = 'tbl_user';
   static const String userId = 'id';
@@ -46,7 +47,8 @@ class DatabaseHelper {
       $financialTipe TEXT,
       $financialKet TEXT,
       $financialJmlUang TEXT,
-      $financialTgl TEXT
+      $financialTgl TEXT,
+      $financialCreated TEXT
     )
   ''';
     await db.execute(sql);
@@ -100,39 +102,25 @@ class DatabaseHelper {
     return total;
   }
 
-  //update database pemasukan
-  Future<int?> updateDataPemasukan(FinancialModel financialModel) async {
-    var dbClient = await checkDB;
-    return await dbClient!.update(finacialTable, financialModel.toMap(),
-        where: '$financialId = ? and $financialTipe = ?', whereArgs: [financialModel.id, 'pemasukan']);
-  }
-
-  //update database pengeluaran
-  Future<int?> updateDataPengeluaran(FinancialModel financialModel) async {
-    var dbClient = await checkDB;
-    return await dbClient!.update(finacialTable, financialModel.toMap(),
-        where: '$financialId = ? and $financialTipe = ?', whereArgs: [financialModel.id, 'pengeluaran']);
-  }
-
   Future<int?> updateData(FinancialModel financialModel, String type) async {
     var dbClient = await checkDB;
     return await dbClient!.update(finacialTable, financialModel.toMap(),
         where: '$financialId = ? and $financialTipe = ?', whereArgs: [financialModel.id, type]);
   }
 
-  //cek database pemasukan
-  Future<int?> cekDataPemasukan() async {
-    var dbClient = await checkDB;
-    return Sqflite.firstIntValue(await dbClient!.
-    rawQuery('SELECT COUNT(*) FROM $finacialTable WHERE $financialTipe = ?', ['pemasukan']));
-  }
+  // //cek database pemasukan
+  // Future<int?> cekDataPemasukan() async {
+  //   var dbClient = await checkDB;
+  //   return Sqflite.firstIntValue(await dbClient!.
+  //   rawQuery('SELECT COUNT(*) FROM $finacialTable WHERE $financialTipe = ?', ['pemasukan']));
+  // }
 
-  //cek database pengeluaran
-  Future<int?> cekDataPengeluaran() async {
-    var dbClient = await checkDB;
-    return Sqflite.firstIntValue(await dbClient!.
-    rawQuery('SELECT COUNT(*) FROM $finacialTable WHERE $financialTipe = ?', ['pengeluaran']));
-  }
+  // //cek database pengeluaran
+  // Future<int?> cekDataPengeluaran() async {
+  //   var dbClient = await checkDB;
+  //   return Sqflite.firstIntValue(await dbClient!.
+  //   rawQuery('SELECT COUNT(*) FROM $finacialTable WHERE $financialTipe = ?', ['pengeluaran']));
+  // }
 
   //cek row dalam database
   Future<int?> cekDataDatabase() async {

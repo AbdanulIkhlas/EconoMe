@@ -171,13 +171,17 @@ class _PageInputPengeluaranState extends State<PageInputPengeluaran> {
   Future<void> upsertData() async {
     if (widget.financialModel != null) {
       //update
-      await databaseHelper.updateDataPengeluaran(FinancialModel.fromMap({
-        'id': widget.financialModel!.id,
-        'tipe': 'pengeluaran',
-        'keterangan': keterangan!.text,
-        'jml_uang': jml_uang!.text,
-        'tanggal': tanggal!.text
-      }));
+      await databaseHelper.updateData(
+          FinancialModel(
+            id: widget.financialModel!.id,
+            tipe: 'pengeluaran',
+            keterangan: keterangan!.text,
+            jml_uang: jml_uang!.text,
+            tanggal: tanggal!.text,
+            createdAt:
+                widget.financialModel!.createdAt, // keep the original createdAt
+          ),
+          "pengeluaran");
       Navigator.pop(context, 'update');
     } else {
       //insert
@@ -186,6 +190,7 @@ class _PageInputPengeluaranState extends State<PageInputPengeluaran> {
         keterangan: keterangan!.text,
         jml_uang: jml_uang!.text,
         tanggal: tanggal!.text,
+        createdAt: DateTime.now().toIso8601String(), // set createdAt to now
       ));
       Navigator.pop(context, 'save');
     }

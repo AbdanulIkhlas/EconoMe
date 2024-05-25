@@ -4,8 +4,9 @@ class FinancialModel {
   String? keterangan;
   String? jml_uang;
   String? tanggal;
+  String? createdAt; 
 
-  FinancialModel({this.id, this.tipe, this.keterangan, this.jml_uang, this.tanggal});
+  FinancialModel({this.id, this.tipe, this.keterangan, this.jml_uang, this.tanggal, this.createdAt});
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
@@ -16,6 +17,7 @@ class FinancialModel {
     map['keterangan'] = keterangan;
     map['jml_uang'] = jml_uang;
     map['tanggal'] = tanggal;
+    map['createdAt'] = createdAt;
 
     return map;
   }
@@ -26,6 +28,7 @@ class FinancialModel {
     this.keterangan = map['keterangan'];
     this.jml_uang = map['jml_uang'];
     this.tanggal = map['tanggal'];
+    this.createdAt = map['createdAt'];
   }
 
 }

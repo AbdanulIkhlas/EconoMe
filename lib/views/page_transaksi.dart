@@ -39,13 +39,14 @@ class _PageTransaksiState extends State<PageTransaksi> {
           incomeTransactions!.map((data) => FinancialModel.fromMap(data)));
       listTransactions.addAll(
           expenseTransactions!.map((data) => FinancialModel.fromMap(data)));
-      // Sort transactions by date in descending order
-      listTransactions.sort((a, b) => b.tanggal!.compareTo(a.tanggal!));
+      // Sort transactions by createdAt in descending order
+      listTransactions.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 
       totalIncome = calculateTotalIncome(listTransactions);
       totalExpense = calculateTotalExpense(listTransactions);
     });
   }
+
 
   int calculateTotalIncome(List<FinancialModel> transactions) {
     return transactions
@@ -79,22 +80,20 @@ class _PageTransaksiState extends State<PageTransaksi> {
     }
   }
 
-  String formatAmount(int amount) {
+  String formatAmount(double amount) {
     if (amount < (-1000000000)) {
       return 'Susah Hidup';
-    } else
-    if (amount < 1000000) {
-      return 'Rp ${amount.toString()}';
+    } else if (amount < 1000000) {
+      return CurrencyFormat.convertToIdr(amount);
     } else if (amount < 1000000000) {
       double result = amount / 1000000;
-      return 'Rp ${result.toStringAsFixed(0)} Jt';
+      return CurrencyFormat.convertToIdr(result) + ' Jt';
     } else if (amount < 1000000000000) {
       double result = amount / 1000000000;
-      return 'Rp ${result.toStringAsFixed(0)} M';
+      return CurrencyFormat.convertToIdr(result) + ' M';
     } else {
       double result = amount / 1000000000000;
-      // kemungkinan kemungkinan
-      return 'Rp ${result.toStringAsFixed(0)} KB';
+      return CurrencyFormat.convertToIdr(result) + ' KB';
     }
   }
 
@@ -189,7 +188,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         ),
                       ),
                       Text(
-                        formatAmount(totalIncome),
+                        formatAmount(totalIncome.toDouble()),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -209,7 +208,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         ),
                       ),
                       Text(
-                        formatAmount(totalExpense),
+                        formatAmount(totalExpense.toDouble()),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -229,7 +228,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         ),
                       ),
                       Text(
-                        formatAmount(calculateBalance()),
+                        formatAmount(calculateBalance().toDouble()),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -316,7 +315,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                             Container(
                               width: 130,
                               child: Text(
-                                formatAmount(int.parse(transaction.jml_uang!)),
+                                formatAmount(int.parse(transaction.jml_uang!).toDouble()),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w500,

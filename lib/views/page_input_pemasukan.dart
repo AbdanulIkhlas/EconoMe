@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../database/DatabaseHelper.dart';
 import '../model/financial_model.dart';
 import 'package:intl/intl.dart';
-import 'bottom_navbar.dart';
 
 class PageInputPemasukan extends StatefulWidget {
   final FinancialModel? financialModel;
@@ -27,11 +26,13 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
             ? ''
             : widget.financialModel!.keterangan);
     tanggal = TextEditingController(
-        text:
-            widget.financialModel == null ? '' : widget.financialModel!.tanggal);
+        text: widget.financialModel == null
+            ? ''
+            : widget.financialModel!.tanggal);
     jml_uang = TextEditingController(
-        text:
-            widget.financialModel == null ? '' : widget.financialModel!.jml_uang);
+        text: widget.financialModel == null
+            ? ''
+            : widget.financialModel!.jml_uang);
     super.initState();
   }
 
@@ -183,13 +184,17 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
   Future<void> upsertData() async {
     if (widget.financialModel != null) {
       //update
-      await databaseHelper.updateDataPemasukan(FinancialModel.fromMap({
-        'id': widget.financialModel!.id,
-        'tipe': 'pemasukan',
-        'keterangan': keterangan!.text,
-        'jml_uang': jml_uang!.text,
-        'tanggal': tanggal!.text
-      }));
+      await databaseHelper.updateData(
+          FinancialModel(
+            id: widget.financialModel!.id,
+            tipe: 'pemasukan',
+            keterangan: keterangan!.text,
+            jml_uang: jml_uang!.text,
+            tanggal: tanggal!.text,
+            createdAt:
+                widget.financialModel!.createdAt, // keep the original createdAt
+          ),
+          "pemasukan");
       Navigator.pop(context, 'update');
     } else {
       //insert
@@ -198,6 +203,7 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
         keterangan: keterangan!.text,
         jml_uang: jml_uang!.text,
         tanggal: tanggal!.text,
+        createdAt: DateTime.now().toIso8601String(), // set createdAt to now
       ));
       Navigator.pop(context, 'save');
     }

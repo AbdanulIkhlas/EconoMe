@@ -20,23 +20,23 @@ class _PagePemasukanState extends State<PagePemasukan> {
   @override
   void initState() {
     super.initState();
-    getDatabase();
+    // getDatabase();
     getJmlUang();
     getAllData();
   }
 
   //cek database ada data atau tidak
-  Future<void> getDatabase() async {
-    var checkDB = await databaseHelper.cekDataPemasukan();
-    setState(() {
-      if (checkDB == 0) {
-        strCheckDatabase = 0;
-        strJmlUang = 0;
-      } else {
-        strCheckDatabase = checkDB!;
-      }
-    });
-  }
+  // Future<void> getDatabase() async {
+  //   var checkDB = await databaseHelper.cekDataPemasukan();
+  //   setState(() {
+  //     if (checkDB == 0) {
+  //       strCheckDatabase = 0;
+  //       strJmlUang = 0;
+  //     } else {
+  //       strCheckDatabase = checkDB!;
+  //     }
+  //   });
+  // }
 
   //cek jumlah total uang
   Future<void> getJmlUang() async {
@@ -67,7 +67,7 @@ class _PagePemasukanState extends State<PagePemasukan> {
     await databaseHelper.deletePemasukan(financialModel.id!);
     setState(() {
       getJmlUang();
-      getDatabase();
+      // getDatabase();
       listPemasukan.removeAt(position);
     });
   }
@@ -79,7 +79,7 @@ class _PagePemasukanState extends State<PagePemasukan> {
     if (result == 'save') {
       await getAllData();
       await getJmlUang();
-      await getDatabase();
+      // await getDatabase();
     }
   }
 
@@ -91,7 +91,7 @@ class _PagePemasukanState extends State<PagePemasukan> {
     if (result == 'update') {
       await getAllData();
       await getJmlUang();
-      await getDatabase();
+      // await getDatabase();
     }
   }
 

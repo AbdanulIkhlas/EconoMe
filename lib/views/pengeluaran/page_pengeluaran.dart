@@ -27,7 +27,7 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
 
   //cek database ada data atau tidak
   Future<void> getDatabase() async {
-    var checkDB = await databaseHelper.cekDataPengeluaran();
+    var checkDB = await databaseHelper.cekDataDatabase();
     setState(() {
       if (checkDB == 0) {
         strCheckDatabase = 0;
