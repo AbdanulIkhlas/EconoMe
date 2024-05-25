@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'login_screen.dart';
 
 class ProfilePage extends StatelessWidget {
   @override
@@ -45,10 +46,20 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 40),
-                CircleAvatar(
-                  backgroundImage: AssetImage('images/foto.jpg'),
-                  radius: 130,
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Color.fromARGB(255, 192, 189, 160), // Warna border
+                      width: 4, // Lebar border
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    backgroundImage: AssetImage('assets/foto.png'),
+                    radius: 130,
+                  ),
                 ),
+
                 SizedBox(height: 40),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -57,9 +68,27 @@ class ProfilePage extends StatelessWidget {
                     _infoProfile('Nama', 'Muhammad Abdanul Ikhlas'),
                     _infoProfile('NIM', '123210009'),
                     _infoProfile('Kelas', 'IF - B'),
-                    _infoProfile('Hobi', 'Bermain Volly'),
                   ],
                 ),
+                SizedBox(height: 40),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red, // Warna latar belakang
+                  ),
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: Colors.white, // Warna teks
+                    ),
+                  ),
+                )
+
               ],
             ),
           ),

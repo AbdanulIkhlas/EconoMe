@@ -6,6 +6,7 @@ import '../../model/financial_model.dart';
 import 'page_input_pemasukan.dart';
 import 'page_input_pengeluaran.dart';
 import 'page_detail_transaksi.dart';
+import 'package:rxdart/rxdart.dart';
 
 class PageTransaksi extends StatefulWidget {
   const PageTransaksi({Key? key}) : super(key: key);
