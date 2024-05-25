@@ -97,13 +97,6 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
     }
   }
 
-  String formatTime(String dateTimeString) {
-    DateTime dateTime = DateTime.parse(dateTimeString);
-    String hour = dateTime.hour.toString().padLeft(2, '0');
-    String minute = dateTime.minute.toString().padLeft(2, '0');
-    return '$hour.$minute WIB';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -239,24 +232,21 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                   ),
                 ],
               ),
-              SizedBox(height: 10),
               Container(
                 width: double.infinity,
                 height: 1,
                 color: Color(0xFF6B6C67),
               ),
-              SizedBox(height: 10),
               Text(
                 'Konversi Waktu',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
-                  fontWeight: FontWeight.bold
                 ),
               ),
               SizedBox(height: 10),
               Text(
-                formatTime(widget.financialModel.createdAt!),
+                widget.financialModel.createdAt!.split(' ')[1],
                 style: TextStyle(color: Colors.white, fontSize: 16),
                 textAlign: TextAlign.center,
               ),
@@ -344,7 +334,6 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
-                  fontWeight: FontWeight.bold
                 ),
               ),
               SizedBox(height: 10),
@@ -411,6 +400,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                                 minimumSize: Size(double.infinity, 50),
                               ),
                             ),
+                            
                           ],
                         ),
                       );
