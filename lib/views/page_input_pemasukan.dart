@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../database/DatabaseHelper.dart';
-import '../../model/model_database.dart';
+import '../database/DatabaseHelper.dart';
+import '../model/financial_model.dart';
 import 'package:intl/intl.dart';
 
 class PageInputPemasukan extends StatefulWidget {
-  final ModelDatabase? modelDatabase;
+  final FinancialModel? financialModel;
 
-  PageInputPemasukan({this.modelDatabase});
+  PageInputPemasukan({this.financialModel});
 
   @override
   _PageInputPemasukanState createState() => _PageInputPemasukanState();
@@ -22,15 +22,17 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
   @override
   void initState() {
     keterangan = TextEditingController(
-        text: widget.modelDatabase == null
+        text: widget.financialModel == null
             ? ''
-            : widget.modelDatabase!.keterangan);
+            : widget.financialModel!.keterangan);
     tanggal = TextEditingController(
-        text:
-            widget.modelDatabase == null ? '' : widget.modelDatabase!.tanggal);
+        text: widget.financialModel == null
+            ? ''
+            : widget.financialModel!.tanggal);
     jml_uang = TextEditingController(
-        text:
-            widget.modelDatabase == null ? '' : widget.modelDatabase!.jml_uang);
+        text: widget.financialModel == null
+            ? ''
+            : widget.financialModel!.jml_uang);
     super.initState();
   }
 
@@ -157,7 +159,7 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
                       }
                     },
                     child: Center(
-                      child: (widget.modelDatabase == null)
+                      child: (widget.financialModel == null)
                           ? Text(
                               'Tambah Data',
                               style:
@@ -180,23 +182,28 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
   }
 
   Future<void> upsertData() async {
-    if (widget.modelDatabase != null) {
+    if (widget.financialModel != null) {
       //update
-      await databaseHelper.updateDataPemasukan(ModelDatabase.fromMap({
-        'id': widget.modelDatabase!.id,
-        'tipe': 'pemasukan',
-        'keterangan': keterangan!.text,
-        'jml_uang': jml_uang!.text,
-        'tanggal': tanggal!.text
-      }));
+      await databaseHelper.updateData(
+          FinancialModel(
+            id: widget.financialModel!.id,
+            tipe: 'pemasukan',
+            keterangan: keterangan!.text,
+            jml_uang: jml_uang!.text,
+            tanggal: tanggal!.text,
+            createdAt:
+                widget.financialModel!.createdAt, // keep the original createdAt
+          ),
+          "pemasukan");
       Navigator.pop(context, 'update');
     } else {
       //insert
-      await databaseHelper.saveData(ModelDatabase(
+      await databaseHelper.saveData(FinancialModel(
         tipe: 'pemasukan',
         keterangan: keterangan!.text,
         jml_uang: jml_uang!.text,
         tanggal: tanggal!.text,
+        createdAt: DateTime.now().toIso8601String(), // set createdAt to now
       ));
       Navigator.pop(context, 'save');
     }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import './views/pemasukan/page_pemasukan.dart';
 import './views/pengeluaran/page_pengeluaran.dart';
+import './views/bottom_navbar.dart';
+import 'controllers/initializer.dart';
 
 // Definisikan warna utama
 const int primaryColorHex = 0xFF5c5c54;
@@ -68,33 +70,8 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(0xFFa7a597),
-          title: Text(
-            'EconoMe',
-            style: const TextStyle(fontSize: 30, color: Colors.white),
-          ),
-        ),
-        body: _widgetOptions.elementAt(_selectedIndex),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.archive_outlined),
-              label: 'Pemasukan',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.unarchive_outlined),
-              label: 'Pengeluaran',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.black26,
-          backgroundColor: Color(0xFFa7a597),
-          onTap: _onItemTapped,
-        ),
-      ),
+      // home: BottomNavbar(),
+      home: Initializer(),
     );
   }
 }

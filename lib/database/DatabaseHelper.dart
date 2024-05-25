@@ -1,18 +1,25 @@
-import '../model/model_database.dart';
+import '../model/financial_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   static Database? _database;
 
   //inisialisasi beberapa variabel yang dibutuhkan
-  final String tableName = 'tbl_keuangan';
-  final String columnId = 'id';
-  final String columnTipe = 'tipe';
-  final String columnKet = 'keterangan';
-  final String columnJmlUang = 'jml_uang';
-  final String columnTgl = 'tanggal';
+  static const String finacialTable = 'tbl_keuangan';
+  static const String financialId = 'id';
+  static const String financialTipe = 'tipe';
+  static const String financialKet = 'keterangan';
+  static const String financialJmlUang = 'jml_uang';
+  static const String financialTgl = 'tanggal';
+  static const String financialCreated = 'createdAt';
+
+  static const String userTable = 'tbl_user';
+  static const String userId = 'id';
+  static const String username = 'username';
+  static const String password = 'password';
 
   DatabaseHelper._internal();
 
@@ -29,38 +36,59 @@ class DatabaseHelper {
 
   Future<Database?> _initDB() async {
     String databasePath = await getDatabasesPath();
-    String path = join(databasePath, 'keuangan.db');
+    String path = join(databasePath, 'econome.db');
     return await openDatabase(path, version: 1, onCreate: _onCreate);
   }
 
   //membuat tabel dan field-fieldnya
   Future<void> _onCreate(Database db, int version) async {
-    var sql = "CREATE TABLE $tableName($columnId INTEGER PRIMARY KEY, "
-        "$columnTipe TEXT,"
-        "$columnKet TEXT,"
-        "$columnJmlUang TEXT,"
-        "$columnTgl TEXT)";
+    var sql = '''
+    CREATE TABLE $finacialTable (
+      $financialId INTEGER PRIMARY KEY, 
+      $financialTipe TEXT,
+      $financialKet TEXT,
+      $financialJmlUang TEXT,
+      $financialTgl TEXT,
+      $financialCreated TEXT
+    )
+  ''';
     await db.execute(sql);
+
+    var userSql = '''
+    CREATE TABLE $userTable (
+      $userId INTEGER PRIMARY KEY, 
+      $username TEXT,
+      $password TEXT
+    )
+  ''';
+    await db.execute(userSql);
   }
 
+
   //insert ke database
-  /// Fungsi ini digunakan untuk memasukkan data ke database.
-  Future<int?> saveData(ModelDatabase modelDatabase) async {
+  Future<int?> saveData(FinancialModel financialModel) async {
     var dbClient = await checkDB;
-    return await dbClient!.insert(tableName, modelDatabase.toMap());
+    return await dbClient!.insert(finacialTable, financialModel.toMap());
   }
 
   //read data pemasukan
   Future<List?> getDataPemasukan() async {
     var dbClient = await checkDB;
-    var result = await dbClient!.rawQuery('SELECT * FROM $tableName WHERE $columnTipe = ?', ['pemasukan']);
+    var result = await dbClient!.rawQuery('SELECT * FROM $finacialTable WHERE $financialTipe = ?', ['pemasukan']);
     return result.toList();
   }
 
   //read data pengeluaran
   Future<List?> getDataPengeluaran() async {
     var dbClient = await checkDB;
-    var result = await dbClient!.rawQuery('SELECT * FROM $tableName WHERE $columnTipe = ?', ['pengeluaran']);
+    var result = await dbClient!.rawQuery('SELECT * FROM $finacialTable WHERE $financialTipe = ?', ['pengeluaran']);
+    return result.toList();
+  }
+
+  //read semua data finansial
+  Future<List?> getAllDataTransaction() async {
+    var dbClient = await checkDB;
+    var result = await dbClient!.rawQuery('SELECT * FROM $finacialTable ');
     return result.toList();
   }
 
@@ -68,7 +96,7 @@ class DatabaseHelper {
   Future<int> getJmlPemasukan() async{
     var dbClient = await checkDB;
     var queryResult = await dbClient!.
-    rawQuery('SELECT SUM(jml_uang) AS TOTAL from $tableName WHERE $columnTipe = ?', ['pemasukan']);
+    rawQuery('SELECT SUM(jml_uang) AS TOTAL from $finacialTable WHERE $financialTipe = ?', ['pemasukan']);
     int total = int.parse(queryResult[0]['TOTAL'].toString());
     return total;
   }
@@ -77,51 +105,42 @@ class DatabaseHelper {
   Future<int> getJmlPengeluaran() async{
     var dbClient = await checkDB;
     var queryResult = await dbClient!.
-    rawQuery('SELECT SUM(jml_uang) AS TOTAL from $tableName WHERE $columnTipe = ?', ['pengeluaran']);
+    rawQuery('SELECT SUM(jml_uang) AS TOTAL from $finacialTable WHERE $financialTipe = ?', ['pengeluaran']);
     int total = int.parse(queryResult[0]['TOTAL'].toString());
     return total;
   }
 
-  //update database pemasukan
-  Future<int?> updateDataPemasukan(ModelDatabase modelDatabase) async {
+  Future<int?> updateData(FinancialModel financialModel, String type) async {
     var dbClient = await checkDB;
-    return await dbClient!.update(tableName, modelDatabase.toMap(),
-        where: '$columnId = ? and $columnTipe = ?', whereArgs: [modelDatabase.id, 'pemasukan']);
+    return await dbClient!.update(finacialTable, financialModel.toMap(),
+        where: '$financialId = ? and $financialTipe = ?', whereArgs: [financialModel.id, type]);
   }
 
-  //update database pengeluaran
-  Future<int?> updateDataPengeluaran(ModelDatabase modelDatabase) async {
-    var dbClient = await checkDB;
-    return await dbClient!.update(tableName, modelDatabase.toMap(),
-        where: '$columnId = ? and $columnTipe = ?', whereArgs: [modelDatabase.id, 'pengeluaran']);
-  }
-
-  //cek database pemasukan
-  Future<int?> cekDataPemasukan() async {
+  //cek row dalam database
+  Future<int?> cekDataDatabase() async {
     var dbClient = await checkDB;
     return Sqflite.firstIntValue(await dbClient!.
-    rawQuery('SELECT COUNT(*) FROM $tableName WHERE $columnTipe = ?', ['pemasukan']));
-  }
-
-  //cek database pengeluaran
-  Future<int?> cekDataPengeluaran() async {
-    var dbClient = await checkDB;
-    return Sqflite.firstIntValue(await dbClient!.
-    rawQuery('SELECT COUNT(*) FROM $tableName WHERE $columnTipe = ?', ['pengeluaran']));
+    rawQuery('SELECT COUNT(*) FROM $finacialTable '));
   }
 
   //hapus database pemasukan
   Future<int?> deletePemasukan(int id) async {
     var dbClient = await checkDB;
     return await dbClient!.
-    delete(tableName, where: '$columnId = ? and $columnTipe = ?', whereArgs: [id, 'pemasukan']);
+    delete(finacialTable, where: '$financialId = ? and $financialTipe = ?', whereArgs: [id, 'pemasukan']);
   }
 
   //hapus database pengeluaran
   Future<int?> deleteDataPengeluaran(int id) async {
     var dbClient = await checkDB;
     return await dbClient!.
-    delete(tableName, where: '$columnId = ? and $columnTipe = ?', whereArgs: [id, 'pengeluaran']);
+    delete(finacialTable, where: '$financialId = ? and $financialTipe = ?', whereArgs: [id, 'pengeluaran']);
+  }
+
+  Future<int?> deleteTransaksi(int id, String type) async {
+    var dbClient = await checkDB;
+    return await dbClient!.
+    delete(finacialTable, where: '$financialId = ? and $financialTipe = ?', whereArgs: [id, type]);
   }
 }
 

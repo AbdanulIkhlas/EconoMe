@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../database/DatabaseHelper.dart';
 import '../../decoration/format_rupiah.dart';
-import '../../model/model_database.dart';
-import '../pengeluaran/page_input_pengeluaran.dart';
+import '../../model/financial_model.dart';
+import '../page_input_pengeluaran.dart';
 
 class PagePengeluaran extends StatefulWidget {
   const PagePengeluaran({Key? key}) : super(key: key);
@@ -12,7 +12,7 @@ class PagePengeluaran extends StatefulWidget {
 }
 
 class _PagePengeluaranState extends State<PagePengeluaran> {
-  List<ModelDatabase> listPemasukan = [];
+  List<FinancialModel> listPemasukan = [];
   DatabaseHelper databaseHelper = DatabaseHelper();
   int strJmlUang = 0;
   int strCheckDatabase = 0;
@@ -27,7 +27,7 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
 
   //cek database ada data atau tidak
   Future<void> getDatabase() async {
-    var checkDB = await databaseHelper.cekDataPengeluaran();
+    var checkDB = await databaseHelper.cekDataDatabase();
     setState(() {
       if (checkDB == 0) {
         strCheckDatabase = 0;
@@ -56,14 +56,14 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
     setState(() {
       listPemasukan.clear();
       listData!.forEach((kontak) {
-        listPemasukan.add(ModelDatabase.fromMap(kontak));
+        listPemasukan.add(FinancialModel.fromMap(kontak));
       });
     });
   }
 
   //untuk hapus data berdasarkan Id
-  Future<void> deleteData(ModelDatabase modelDatabase, int position) async {
-    await databaseHelper.deleteDataPengeluaran(modelDatabase.id!);
+  Future<void> deleteData(FinancialModel financialModel, int position) async {
+    await databaseHelper.deleteDataPengeluaran(financialModel.id!);
     setState(() {
       getJmlUang();
       getDatabase();
@@ -83,10 +83,10 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
   }
 
   //untuk edit data
-  Future<void> openFormEdit(ModelDatabase modelDatabase) async {
+  Future<void> openFormEdit(FinancialModel financialModel) async {
     var result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => PageInputPengeluaran(modelDatabase: modelDatabase)));
+        MaterialPageRoute(builder: (context) => PageInputPengeluaran(financialModel: financialModel)));
     if (result == 'update') {
       await getAllData();
       await getJmlUang();
@@ -97,6 +97,13 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Color(0xFFa7a597),
+          title: Text(
+            'EconoMe',
+            style: const TextStyle(fontSize: 30, color: Colors.white),
+          ),
+        ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -163,7 +170,7 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
                 shrinkWrap: true,
                 itemCount: listPemasukan.length,
                 itemBuilder: (context, index) {
-                  ModelDatabase modeldatabase = listPemasukan[index];
+                  FinancialModel financialModel = listPemasukan[index];
                   return Card(
                     margin: const EdgeInsets.all(10),
                     clipBehavior: Clip.antiAlias,
@@ -171,7 +178,7 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     color: Colors.white,
                     child: ListTile(
-                      title: Text('${modeldatabase.keterangan}',
+                      title: Text('${financialModel.keterangan}',
                           style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -185,7 +192,7 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
                               top: 8,
                             ),
                             child: Text('Jumlah Uang: ' +
-                                CurrencyFormat.convertToIdr(int.parse(modeldatabase.jml_uang.toString())),
+                                CurrencyFormat.convertToIdr(int.parse(financialModel.jml_uang.toString())),
                                 style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.black)),
@@ -195,7 +202,7 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
                                 top: 8,
                                 bottom: 8
                             ),
-                            child: Text('Tanggal: ${modeldatabase.tanggal}',
+                            child: Text('Tanggal: ${financialModel.tanggal}',
                                 style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.black)),
@@ -208,7 +215,7 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
                           children: [
                             IconButton(
                                 onPressed: () {
-                                  openFormEdit(modeldatabase);
+                                  openFormEdit(financialModel);
                                 },
                                 icon: Icon(Icons.edit, color: Colors.black,)
                             ),
@@ -234,7 +241,7 @@ class _PagePengeluaranState extends State<PagePengeluaran> {
                                   actions: [
                                     TextButton(
                                         onPressed: () {
-                                          deleteData(modeldatabase, index);
+                                          deleteData(financialModel, index);
                                           Navigator.pop(context);
                                         },
                                         child: Text('Ya',
