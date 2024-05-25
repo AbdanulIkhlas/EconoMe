@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'pemasukan/page_pemasukan.dart';
+import 'page_kesan.dart';
 import 'pengeluaran/page_pengeluaran.dart';
+import 'page_profile.dart';
 import 'page_transaksi.dart';
 
 class BottomNavbar extends StatefulWidget {
@@ -17,7 +18,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
   static List<Widget> _widgetOptions = <Widget>[
     PageTransaksi(),
-    PagePemasukan(),
+    ProfilePage(),
     PagePengeluaran(),
   ];
 
@@ -49,15 +50,15 @@ class _BottomNavbarState extends State<BottomNavbar> {
           ),
           BottomNavigationBarItem(
             icon: _selectedIndex == 1
-                ? Icon(Icons.archive)
-                : Icon(Icons.archive_outlined),
-            label: 'Pemasukan',
+                ? Icon(Icons.person_pin)
+                : Icon(Icons.person),
+            label: 'Profile',
           ),
           BottomNavigationBarItem(
             icon: _selectedIndex == 2
-                ? Icon(Icons.unarchive)
-                : Icon(Icons.unarchive_outlined),
-            label: 'Pengeluaran',
+                ? Icon(Icons.emoji_emotions)
+                : Icon(Icons.sentiment_very_satisfied),
+            label: 'Saran & Kesan',
           ),
         ],
         currentIndex: _selectedIndex,

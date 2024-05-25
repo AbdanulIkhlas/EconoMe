@@ -134,6 +134,13 @@ class DatabaseHelper {
     rawQuery('SELECT COUNT(*) FROM $finacialTable WHERE $financialTipe = ?', ['pengeluaran']));
   }
 
+  //cek row dalam database
+  Future<int?> cekDataDatabase() async {
+    var dbClient = await checkDB;
+    return Sqflite.firstIntValue(await dbClient!.
+    rawQuery('SELECT COUNT(*) FROM $finacialTable '));
+  }
+
   //hapus database pemasukan
   Future<int?> deletePemasukan(int id) async {
     var dbClient = await checkDB;

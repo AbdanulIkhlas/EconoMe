@@ -19,10 +19,13 @@ class _PageTransaksiState extends State<PageTransaksi> {
   DatabaseHelper databaseHelper = DatabaseHelper();
   int totalIncome = 0;
   int totalExpense = 0;
+  int strJmlUang = 0;
+  int strCheckDatabase = 0;
 
   @override
   void initState() {
     super.initState();
+    getDataDatabase();
     getTransactions();
   }
 
@@ -114,6 +117,19 @@ class _PageTransaksiState extends State<PageTransaksi> {
       ),
     );
     getTransactions();
+  }
+
+  //cek database ada data atau tidak
+  Future<void> getDataDatabase() async {
+    var checkDB = await databaseHelper.cekDataDatabase();
+    setState(() {
+      if (checkDB == 0) {
+        strCheckDatabase = 0;
+        strJmlUang = 0;
+      } else {
+        strCheckDatabase = checkDB!;
+      }
+    });
   }
 
   @override
@@ -230,7 +246,23 @@ class _PageTransaksiState extends State<PageTransaksi> {
 
             
             SizedBox(height: 20),
-            ListView.builder(
+            strCheckDatabase == 0
+            ? 
+            Container(
+                    padding: EdgeInsets.only(left: 10, right: 10, top: 200),
+                    child: Center(
+                      child: Text(
+                        'Ups, belum ada catatan.\nYuk catat keuangan Kamu!',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+            : ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: listTransactions.length,
