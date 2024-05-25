@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'page_kesan.dart';
-import 'pengeluaran/page_pengeluaran.dart';
 import 'page_profile.dart';
 import 'page_transaksi.dart';
 

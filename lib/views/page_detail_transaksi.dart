@@ -6,10 +6,6 @@ import 'page_input_pemasukan.dart';
 import 'page_input_pengeluaran.dart';
 import 'bottom_navbar.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../model/timezone_model.dart';
-import '../model/time_model.dart';
-import '../model/currency_model.dart';
-import '../services/api_data_source.dart';
 import '../services/base_network.dart';
 
 class DetailTransaksi extends StatefulWidget {
@@ -165,11 +161,29 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
     }
   }
 
-
+  // fungsi waktu sekarang
   String currentTime() {
     DateTime now = DateTime.now();
     String currentTime = '${now.hour}:${now.minute}:${now.second}';
     return currentTime;
+  }
+
+  // fungsi menampilkan zona dan jumlah
+  String formatAmount(String zone, double amount) {
+    String _amount = amount.toStringAsFixed(2);
+    return "Money in ${zone} : ${_amount}";  ;
+  }
+
+  //fungsi format time
+  String formatTime(String dateTimeString) {
+    DateTime dateTime = DateTime.parse(dateTimeString);
+    String day = dateTime.day.toString().padLeft(2, '0');
+    String month = dateTime.month.toString().padLeft(2, '0');
+    String year = dateTime.year.toString();
+    String hour = dateTime.hour.toString().padLeft(2, '0');
+    String minute = dateTime.minute.toString().padLeft(2, '0');
+    String second = dateTime.second.toString().padLeft(2, '0');
+    return '$day-$month-$year, $hour:$minute:$second WIB';
   }
 
 
@@ -261,7 +275,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
               ),
               SizedBox(height: 10),
               Text(
-                widget.financialModel.createdAt!,
+                formatTime(widget.financialModel.createdAt!),
                 style: TextStyle(color: Colors.white, fontSize: 16),
                 textAlign: TextAlign.center,
               ),
@@ -523,7 +537,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Selected Currency: $selectedCurrency',
+                              'IDR to $selectedCurrency',
                               style: TextStyle(
                                 color: Color(0xFFF2EFCD),
                                 fontSize: 16,
@@ -531,7 +545,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                             ),
                             SizedBox(height: 10),
                             Text(
-                              'Money : Rp ${widget.financialModel.jml_uang!}',
+                              'Money in IDR : Rp ${widget.financialModel.jml_uang!}',
                               style: TextStyle(
                                 color: Color(0xFFF2EFCD),
                                 fontSize: 16,
@@ -539,7 +553,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                             ),
                             SizedBox(height: 10),
                             Text(
-                              'Amount: $selectedCurrency $amount',
+                              formatAmount(selectedCurrency, amount),
                               style: TextStyle(
                                 color: Color(0xFFF2EFCD),
                                 fontSize: 16,
