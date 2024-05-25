@@ -142,5 +142,5 @@ class DatabaseHelper {
     return await dbClient!.
     delete(finacialTable, where: '$financialId = ? and $financialTipe = ?', whereArgs: [id, type]);
   }
-
 }
+

@@ -41,12 +41,12 @@ class _PagePemasukanState extends State<PagePemasukan> {
   //cek jumlah total uang
   Future<void> getJmlUang() async {
     var checkJmlUang = await databaseHelper.getJmlPemasukan();
-    var jmlPengeluaran= await databaseHelper.getJmlPengeluaran();
+    var jmlPengeluaran = await databaseHelper.getJmlPengeluaran();
     setState(() {
       if (checkJmlUang == 0) {
         strJmlUang = 0;
       } else {
-        strJmlUang = checkJmlUang - jmlPengeluaran;
+        strJmlUang = checkJmlUang - jmlPengeluaran ;
       }
     });
   }
@@ -289,24 +289,3 @@ class _PagePemasukanState extends State<PagePemasukan> {
   }
 
 }
-
-// trailing: Row(
-//                         mainAxisSize: MainAxisSize.min,
-//                         children: [
-//                           IconButton(
-//                             icon: Icon(Icons.edit,
-//                                 color: transaction.tipe == 'pengeluaran'
-//                                     ? Colors.red
-//                                     : Colors.green),
-//                             onPressed: () {
-//                               // Navigate to edit transaction page
-//                             },
-//                           ),
-//                           IconButton(
-//                             icon: Icon(Icons.delete, color: Colors.red),
-//                             onPressed: () {
-//                               // Show delete confirmation dialog
-//                             },
-//                           ),
-//                         ],
-//                       ),
