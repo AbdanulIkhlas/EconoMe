@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../model/financial_model.dart';
-import '../decoration/format_rupiah.dart';
 import '../database/DatabaseHelper.dart';
 import 'page_input_pemasukan.dart';
 import 'page_input_pengeluaran.dart';
@@ -215,7 +214,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
               ),
               SizedBox(height: 10),
               Text(
-                CurrencyFormat.convertToIdr(
+                OtherController.convertToIdr(
                     int.parse(widget.financialModel.jml_uang!)),
                 style: TextStyle(color: Colors.white, fontSize: 16),
                 textAlign: TextAlign.center,
@@ -434,6 +433,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                       );
                     },
                   );
+                
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF424242),
@@ -467,7 +467,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
               ),
               SizedBox(height: 10),
               Text(
-                CurrencyFormat.convertToIdr(
+                OtherController.convertToIdr(
                     int.parse(widget.financialModel.jml_uang!)),
                 style: TextStyle(
                   color: Colors.white,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../model/financial_model.dart';
 import '../controllers/transaction_controller.dart';
+import '../controllers/other_controllers.dart';
 
 class PageTransaksi extends StatefulWidget {
   const PageTransaksi({Key? key}) : super(key: key);
@@ -13,6 +14,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
   final List<FinancialModel> listTransactions = [];
   final List<FinancialModel> _filteredTransactions = [];
   final TransactionController _transactionController = TransactionController();
+  final OtherController otherController = OtherController();
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
   int totalIncome = 0;
@@ -117,92 +119,107 @@ class _PageTransaksiState extends State<PageTransaksi> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Color(0xFF585752),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
-                    spreadRadius: 3,
-                    blurRadius: 7,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        'Pemasukan',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFffffce),
-                        ),
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      backgroundColor: Color(0xFF424242),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _infoItem('Pemasukan', totalIncome.toString(), Colors.green),
+                          _infoItem('Pengeluaran', totalExpense.toString(), Colors.red),
+                          _infoItem('Saldo', _transactionController.calculateBalance(totalIncome, totalExpense).toString(), _transactionController.calculateBalance(totalIncome, totalExpense) >= 0 ? Colors.green : Colors.red),
+                        ],
                       ),
-                      Text(
-                        _transactionController
-                            .formatAmount(totalIncome.toDouble()),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                    );
+                  },
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Color(0xFF585752),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5),
+                      spreadRadius: 3,
+                      blurRadius: 7,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          'Pemasukan',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFffffce),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        'Pengeluaran',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFffffce),
+                        Text(
+                          _transactionController
+                              .formatAmount(totalIncome.toDouble()),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
                         ),
-                      ),
-                      Text(
-                        _transactionController
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          'Pengeluaran',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFffffce),
+                          ),
+                        ),
+                        Text(
+                          _transactionController
                             .formatAmount(totalExpense.toDouble()),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        'Saldo',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFffffce),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          'Saldo',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFffffce),
+                          ),
                         ),
-                      ),
-                      Text(
-                        _transactionController.formatAmount(
-                            _transactionController
-                                .calculateBalance(totalIncome, totalExpense)
-                                .toDouble()),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: _transactionController.calculateBalance(
-                                      totalIncome, totalExpense) >=
-                                  0
-                              ? Colors.green
-                              : Colors.red,
+                        Text(
+                          _transactionController.formatAmount(
+                            _transactionController.calculateBalance(
+                                totalIncome, totalExpense).toDouble()),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: _transactionController.calculateBalance(totalIncome, totalExpense) >= 0 ? Colors.green : Colors.red,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 20),
@@ -314,6 +331,30 @@ class _PageTransaksiState extends State<PageTransaksi> {
         backgroundColor: Color(0xFF585752),
         foregroundColor: Color(0xFFfefad4),
       ),
+    );
+  }
+
+  Widget _infoItem(String title, String value, Color textColor) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFFffffce),
+          ),
+        ),
+        Text(
+          OtherController.convertToIdr(value),
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        ),
+      ],
     );
   }
 
