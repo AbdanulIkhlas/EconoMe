@@ -2,104 +2,67 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class BaseNetwork {
-  Future<dynamic> fetchTimezone() async {
-    String url = "https://timeapi.io/api/TimeZone/AvailableTimeZones";
+  // Fungsi untuk mengambil daftar zona waktu yang tersedia dari API TimeAPI
+Future<dynamic> fetchTimezone() async {
+  // URL endpoint API TimeAPI untuk mendapatkan daftar zona waktu
+  String url = "https://timeapi.io/api/TimeZone/AvailableTimeZones";
 
-    final response = await http.get(Uri.parse(url));
-    //print(jsonDecode(response.body));
-    if (response.statusCode == 200) {
-      var bodyDecoded = jsonDecode(response.body);
-      return bodyDecoded;
-    } else {
-      throw Exception('failed to fetch timezone');
-    }
+  // Melakukan panggilan HTTP GET ke URL
+  final response = await http.get(Uri.parse(url));
+
+  // Memeriksa status kode respons
+  if (response.statusCode == 200) {
+    // Jika respons berhasil (status kode 200), mengurai body respons dari format JSON
+    var bodyDecoded = jsonDecode(response.body);
+    // Mengembalikan hasil yang telah diurai
+    return bodyDecoded;
+  } else {
+    // Jika respons tidak berhasil, melemparkan exception dengan pesan kesalahan
+    throw Exception('failed to fetch timezone');
   }
+}
 
+
+  // Fungsi untuk mengambil waktu dari zona waktu tertentu dari API TimeAPI
   Future<dynamic> fetchTime(String zone) async {
+    // Membentuk URL endpoint API TimeAPI dengan zona waktu yang ditentukan
     String url = "https://timeapi.io/api/Time/current/zone?timeZone=${zone}";
 
+    // Melakukan panggilan HTTP GET ke URL
     final response = await http.get(Uri.parse(url));
-    //print(jsonDecode(response.body));
+
+    // Memeriksa status kode respons
     if (response.statusCode == 200) {
+      // Jika respons berhasil (status kode 200), mengurai body respons dari format JSON
       var bodyDecoded = jsonDecode(response.body);
+      // Mengembalikan hasil yang telah diurai
       return bodyDecoded;
     } else {
+      // Jika respons tidak berhasil, melemparkan exception dengan pesan kesalahan
       throw Exception('failed to fetch time');
     }
   }
 
-  Future<dynamic> fetchCurrency() async {
-    String url = "https://v6.exchangerate-api.com/v6/fe4e52059eeb81f211dac145/latest/IDR";
 
+  // Fungsi untuk mengambil data kurs mata uang terkini dari API ExchangeRate-API
+  Future<dynamic> fetchCurrency() async {
+    // URL endpoint API ExchangeRate-API untuk mendapatkan data kurs mata uang terkini
+    String url =
+        "https://v6.exchangerate-api.com/v6/fe4e52059eeb81f211dac145/latest/IDR";
+
+    // Melakukan panggilan HTTP GET ke URL
     final response = await http.get(Uri.parse(url));
-    //print(jsonDecode(response.body));
+
+    // Memeriksa status kode respons
     if (response.statusCode == 200) {
+      // Jika respons berhasil (status kode 200), mengurai body respons dari format JSON
       var bodyDecoded = jsonDecode(response.body);
+      // Mengembalikan bagian 'conversion_rates' dari hasil yang telah diurai
       return bodyDecoded['conversion_rates'];
     } else {
+      // Jika respons tidak berhasil, melemparkan exception dengan pesan kesalahan
       throw Exception('failed to fetch currency');
     }
   }
-  // static Future<Map<String, dynamic>> getTime(String partUrl) async {
-  //   final String fullUrl = "https://timeapi.io/api/Time$partUrl";
-  //   _logDebug("fullUrl: $fullUrl");
 
-  //   final http.Response response = await http.get(Uri.parse(fullUrl));
-  //   _logDebug("response: ${response.body}");
-
-  //   return _processResponse(response);
-  // }
-
-  // static Future<List<dynamic>> getTimezone() async {
-  //   final String fullUrl = "https://timeapi.io/api/TimeZone/AvailableTimeZones";
-  //   _logDebug("fullUrl: $fullUrl");
-
-  //   final http.Response response = await http.get(Uri.parse(fullUrl));
-  //   _logDebug("response: ${response.body}");
-
-  //   return _processResponseList(response);
-  // }
-
-  // static Future<Map<String, dynamic>> getCurrency() async {
-  //   final String fullUrl = "https://v6.exchangerate-api.com/v6/fe4e52059eeb81f211dac145/latest/IDR";
-  //   _logDebug("fullUrl: $fullUrl");
-
-  //   final http.Response response = await http.get(Uri.parse(fullUrl));
-  //   _logDebug("response: ${response.body}");
-
-  //   return _processResponse(response);
-  // }
-
-  // static Future<Map<String, dynamic>> _processResponse(
-  //     http.Response response) async {
-  //   final String body = response.body;
-  //   if (body.isNotEmpty) {
-  //     final Map<String, dynamic> jsonBody = json.decode(body);
-  //     return jsonBody;
-  //   } else {
-  //     _logDebug("processResponse error");
-  //     return {"error": true};
-  //   }
-  // }
-  // static Future<List<dynamic>> _processResponseList(
-  //     http.Response response) async {
-  //   final String body = response.body;
-  //   print("body _processResponseList: $body");
-  //   if (body.isNotEmpty) {
-  //     final List<dynamic> jsonBody = json.decode(body);
-  //     return jsonBody;
-  //   } else {
-  //     _logDebug("processResponse error");
-  //     // return "error";
-  //     throw Exception("Failed to load current time");
-  //   }
-  // }
-
-  // // static String _buildFullUrl(String partUrl) {
-  // //   return "$_baseUrl$partUrl";
-  // // }
-
-  // static void _logDebug(String value) {
-  //   print("[BASE_NETWORK] - $value");
-  // }
 }
