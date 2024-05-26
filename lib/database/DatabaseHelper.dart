@@ -109,20 +109,6 @@ class DatabaseHelper {
     rawQuery('SELECT COUNT(*) FROM $finacialTable '));
   }
 
-  //hapus database pemasukan
-  Future<int?> deletePemasukan(int id) async {
-    var dbClient = await checkDB;
-    return await dbClient!.
-    delete(finacialTable, where: '$financialId = ? and $financialTipe = ?', whereArgs: [id, 'pemasukan']);
-  }
-
-  //hapus database pengeluaran
-  Future<int?> deleteDataPengeluaran(int id) async {
-    var dbClient = await checkDB;
-    return await dbClient!.
-    delete(finacialTable, where: '$financialId = ? and $financialTipe = ?', whereArgs: [id, 'pengeluaran']);
-  }
-
   Future<int?> deleteTransaksi(int id, String type) async {
     var dbClient = await checkDB;
     return await dbClient!.
