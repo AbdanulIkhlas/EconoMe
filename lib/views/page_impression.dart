@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class PesanKesanPage extends StatefulWidget {
+class PageImpression extends StatefulWidget {
   @override
-  _PesanKesanPageState createState() => _PesanKesanPageState();
+  _PageImpressionState createState() => _PageImpressionState();
 }
 
-class _PesanKesanPageState extends State<PesanKesanPage>
+class _PageImpressionState extends State<PageImpression>
     with SingleTickerProviderStateMixin {
   String _displayText = '';
   double _opacity = 0.0;

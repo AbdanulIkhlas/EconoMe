@@ -3,16 +3,16 @@ import '../database/DatabaseHelper.dart';
 import '../model/financial_model.dart';
 import 'package:intl/intl.dart';
 
-class PageInputPemasukan extends StatefulWidget {
+class PageInputExpense extends StatefulWidget {
   final FinancialModel? financialModel;
 
-  PageInputPemasukan({this.financialModel});
+  PageInputExpense({this.financialModel});
 
   @override
-  _PageInputPemasukanState createState() => _PageInputPemasukanState();
+  _PageInputExpenseState createState() => _PageInputExpenseState();
 }
 
-class _PageInputPemasukanState extends State<PageInputPemasukan> {
+class _PageInputExpenseState extends State<PageInputExpense> {
   DatabaseHelper databaseHelper = DatabaseHelper();
 
   TextEditingController? keterangan;
@@ -22,17 +22,11 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
   @override
   void initState() {
     keterangan = TextEditingController(
-        text: widget.financialModel == null
-            ? ''
-            : widget.financialModel!.keterangan);
+        text: widget.financialModel == null ? '' : widget.financialModel!.keterangan);
     tanggal = TextEditingController(
-        text: widget.financialModel == null
-            ? ''
-            : widget.financialModel!.tanggal);
+        text: widget.financialModel == null ? '' : widget.financialModel!.tanggal);
     jml_uang = TextEditingController(
-        text: widget.financialModel == null
-            ? ''
-            : widget.financialModel!.jml_uang);
+        text: widget.financialModel == null ? '' : widget.financialModel!.jml_uang);
     super.initState();
   }
 
@@ -46,8 +40,10 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
           color: Colors.white,
         ),
         backgroundColor: Color(0xFFa7a597),
-        title: Text('Form Data Pemasukan',
-            style: const TextStyle(fontSize: 14, color: Colors.white)),
+        title: Text('Form Data Pengeluaran',
+            style: const TextStyle(
+                fontSize: 14,
+                color: Colors.white)),
       ),
       body: ListView(
         padding: EdgeInsets.all(20),
@@ -60,7 +56,9 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
             cursorColor: Colors.white,
             decoration: InputDecoration(
                 labelText: 'Keterangan',
-                labelStyle: const TextStyle(fontSize: 14, color: Colors.white),
+                labelStyle: const TextStyle(
+                fontSize: 14,
+                color: Colors.white),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                 )),
@@ -73,16 +71,12 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.datetime,
               readOnly: true,
-              style: TextStyle(color: Colors.white), // warna teks input
-              cursorColor: Colors.white,
               onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
                     builder: (BuildContext context, Widget? child) {
                       return Theme(
                         data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(
-                              onPrimary: Colors.white,
-                              onBackground: Colors.white),
+                          colorScheme: const ColorScheme.light(onPrimary: Colors.white, onBackground: Colors.white),
                           datePickerTheme: const DatePickerThemeData(
                             backgroundColor: Color.fromARGB(255, 197, 197, 197),
                             headerBackgroundColor: Color(0xFFa7a597),
@@ -103,8 +97,9 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
               controller: tanggal,
               decoration: InputDecoration(
                   labelText: 'Tanggal',
-                  labelStyle:
-                      const TextStyle(fontSize: 14, color: Colors.white),
+                  labelStyle: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                   )),
@@ -122,8 +117,9 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
               cursorColor: Colors.white,
               decoration: InputDecoration(
                   labelText: 'Jumlah Uang',
-                  labelStyle:
-                      const TextStyle(fontSize: 14, color: Colors.white),
+                  labelStyle: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                   )),
@@ -149,10 +145,9 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
                     onTap: () {
                       if (keterangan!.text.toString() == '' ||
                           tanggal!.text.toString() == '' ||
-                          jml_uang!.text.toString() == '') {
-                        const snackBar = SnackBar(
-                            content:
-                                Text("Ups, form tidak boleh ada yang kosong!"));
+                          jml_uang!.text.toString() == '')
+                      {
+                        const snackBar = SnackBar(content: Text("Ups, form tidak boleh ada yang kosong!"));
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
                         upsertData();
@@ -160,16 +155,8 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
                     },
                     child: Center(
                       child: (widget.financialModel == null)
-                          ? Text(
-                              'Tambah Data',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white),
-                            )
-                          : Text(
-                              'Update Data',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white),
-                            ),
+                          ? Text('Tambah Data', style: TextStyle(fontSize: 14, color: Colors.white),)
+                          : Text('Update Data', style: TextStyle(fontSize: 14, color: Colors.white),),
                     ),
                   ),
                 ),
@@ -187,19 +174,19 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
       await databaseHelper.updateData(
           FinancialModel(
             id: widget.financialModel!.id,
-            tipe: 'pemasukan',
+            tipe: 'pengeluaran',
             keterangan: keterangan!.text,
             jml_uang: jml_uang!.text,
             tanggal: tanggal!.text,
             createdAt:
                 widget.financialModel!.createdAt, // keep the original createdAt
           ),
-          "pemasukan");
+          "pengeluaran");
       Navigator.pop(context, 'update');
     } else {
       //insert
       await databaseHelper.saveData(FinancialModel(
-        tipe: 'pemasukan',
+        tipe: 'pengeluaran',
         keterangan: keterangan!.text,
         jml_uang: jml_uang!.text,
         tanggal: tanggal!.text,
@@ -208,4 +195,5 @@ class _PageInputPemasukanState extends State<PageInputPemasukan> {
       Navigator.pop(context, 'save');
     }
   }
+
 }

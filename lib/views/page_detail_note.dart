@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../model/financial_model.dart';
 import '../database/DatabaseHelper.dart';
-import 'page_input_pemasukan.dart';
-import 'page_input_pengeluaran.dart';
+import 'page_input_income.dart';
+import 'page_input_expense.dart';
 import 'bottom_navbar.dart';
 import '../services/base_network.dart';
 import '../controllers/other_controllers.dart';
@@ -127,7 +127,7 @@ class _DetailNoteState extends State<DetailNote> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  PageInputPengeluaran(financialModel: financialModel)));
+                  PageInputExpense(financialModel: financialModel)));
       if (result == 'update') {
         await updateData();
       }
@@ -136,7 +136,7 @@ class _DetailNoteState extends State<DetailNote> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  PageInputPemasukan(financialModel: financialModel)));
+                  PageInputIncome(financialModel: financialModel)));
       if (result == 'update') {
         await updateData();
       }

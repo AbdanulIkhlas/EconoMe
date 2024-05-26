@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'page_kesan.dart';
+import 'page_impression.dart';
 import 'page_profile.dart';
 import 'page_notes.dart';
 
@@ -17,7 +17,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
   static List<Widget> _widgetOptions = <Widget>[
     PageNotes(),
-    PesanKesanPage(),
+    PageImpression(),
     ProfilePage(),
   ];
 

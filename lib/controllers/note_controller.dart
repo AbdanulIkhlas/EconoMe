@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../database/DatabaseHelper.dart';
 import '../../model/financial_model.dart';
-import '../views/page_input_pemasukan.dart';
-import '../views/page_input_pengeluaran.dart';
+import '../views/page_input_income.dart';
+import '../views/page_input_expense.dart';
 import '../views/page_detail_note.dart';
 import '../controllers/other_controllers.dart';
 
@@ -67,7 +67,7 @@ class NoteController {
     var result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PageInputPemasukan(),
+        builder: (context) => PageInputIncome(),
       ),
     );
 
@@ -84,7 +84,7 @@ class NoteController {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PageInputPengeluaran(),
+        builder: (context) => PageInputExpense(),
       ),
     );
 
