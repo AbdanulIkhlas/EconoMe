@@ -11,13 +11,21 @@ class PageTransaksi extends StatefulWidget {
 
 class _PageTransaksiState extends State<PageTransaksi> {
   final List<FinancialModel> listTransactions = [];
+  final List<FinancialModel> _filteredTransactions = [];
   final TransactionController _transactionController = TransactionController();
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
   int totalIncome = 0;
   int totalExpense = 0;
 
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(_filterTransactions);
+    _fetchTransactions();
+  }
+
+  void _fetchTransactions() {
     _transactionController.getTransactions(
       listTransactions,
       (income) {
@@ -30,7 +38,34 @@ class _PageTransaksiState extends State<PageTransaksi> {
           totalExpense = expense;
         });
       },
-    );
+    ).then((_) {
+      setState(() {
+        _filteredTransactions.clear();
+        _filteredTransactions.addAll(listTransactions);
+      });
+    });
+  }
+
+  void _filterTransactions() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        _filteredTransactions.clear();
+        _filteredTransactions.addAll(listTransactions);
+      } else {
+        _filteredTransactions.clear();
+        _filteredTransactions.addAll(listTransactions.where((transaction) {
+          return transaction.keterangan!.toLowerCase().contains(query) ||
+              transaction.tanggal!.toLowerCase().contains(query);
+        }).toList());
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -39,25 +74,44 @@ class _PageTransaksiState extends State<PageTransaksi> {
       backgroundColor: Color(0xFF424242),
       appBar: AppBar(
         backgroundColor: Color(0xFF585752),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Image.asset(
-                'assets/text-logo.png',
-                height: 30,
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Cari transaksi...',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Color(0xFFffffce)),
+                ),
+                style: TextStyle(color: Color(0xFFffffce), fontSize: 18),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Image.asset(
+                      'assets/text-logo.png',
+                      height: 30,
+                    ),
+                  ),
+                ],
               ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isSearching ? Icons.close : Icons.search,
+              color: Color(0xFFffffce),
             ),
-            Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: Image.asset(
-                'assets/logo.png',
-                height: 60,
-              ),
-            ),
-          ],
-        ),
+            onPressed: () {
+              setState(() {
+                if (_isSearching) {
+                  _searchController.clear();
+                }
+                _isSearching = !_isSearching;
+              });
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -86,7 +140,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Color(0xFFffffce),
                         ),
                       ),
                       Text(
@@ -107,7 +161,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Color(0xFFffffce),
                         ),
                       ),
                       Text(
@@ -128,13 +182,14 @@ class _PageTransaksiState extends State<PageTransaksi> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Color(0xFFffffce),
                         ),
                       ),
                       Text(
                         _transactionController.formatAmount(
-                            _transactionController.calculateBalance(
-                                totalIncome, totalExpense).toDouble()),
+                            _transactionController
+                                .calculateBalance(totalIncome, totalExpense)
+                                .toDouble()),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -151,17 +206,16 @@ class _PageTransaksiState extends State<PageTransaksi> {
               ),
             ),
             SizedBox(height: 20),
-            listTransactions.isEmpty
+            _filteredTransactions.isEmpty
                 ? Container(
-                    padding:
-                        EdgeInsets.only(left: 10, right: 10, top: 200),
+                    padding: EdgeInsets.only(left: 10, right: 10, top: 200),
                     child: Center(
                       child: Text(
                         'Ups, belum ada catatan.\nYuk catat keuangan Kamu!',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Color(0xFFffffce),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -170,9 +224,9 @@ class _PageTransaksiState extends State<PageTransaksi> {
                 : ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: listTransactions.length,
+                    itemCount: _filteredTransactions.length,
                     itemBuilder: (context, index) {
-                      FinancialModel transaction = listTransactions[index];
+                      FinancialModel transaction = _filteredTransactions[index];
                       return GestureDetector(
                         onTap: () {
                           _transactionController.navigateToDetail(
@@ -265,15 +319,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
 
   void _updateTransactions() {
     setState(() {
-      _transactionController.getTransactions(
-        listTransactions,
-        (income) {
-          totalIncome = income;
-        },
-        (expense) {
-          totalExpense = expense;
-        },
-      );
+      _fetchTransactions();
     });
   }
 }

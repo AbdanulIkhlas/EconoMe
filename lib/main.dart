@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import './views/bottom_navbar.dart';
 import 'controllers/initializer.dart';
 
 // Definisikan warna utama

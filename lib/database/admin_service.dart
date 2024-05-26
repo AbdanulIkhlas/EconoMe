@@ -44,4 +44,18 @@ class AdminService {
     final result = await db!.query('tbl_user');
     return result.isNotEmpty;
   }
+
+  Future<String?> getPasswordByUsername(String username) async {
+    final db = await _dbHelper.checkDB;
+    final result = await db!.query(
+      'tbl_user',
+      columns: ['password'],
+      where: 'username = ?',
+      whereArgs: [username],
+    );
+    if (result.isNotEmpty) {
+      return result.first['password'] as String?;
+    }
+    return null;
+  }
 }

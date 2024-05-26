@@ -5,8 +5,8 @@ import '../database/DatabaseHelper.dart';
 import 'page_input_pemasukan.dart';
 import 'page_input_pengeluaran.dart';
 import 'bottom_navbar.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../services/base_network.dart';
+import '../controllers/other_controllers.dart';
 
 class DetailTransaksi extends StatefulWidget {
   final FinancialModel financialModel;
@@ -21,6 +21,8 @@ class DetailTransaksi extends StatefulWidget {
 class _DetailTransaksiState extends State<DetailTransaksi> {
   DatabaseHelper databaseHelper = DatabaseHelper();
   FinancialModel financialModel = FinancialModel();
+  OtherController otherController = OtherController();
+
   int strJmlUang = 0;
   int strCheckDatabase = 0;
   double selectedRate = 1.0;
@@ -153,38 +155,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
     await getDatabase();
   }
 
-  // Function to launch website link in a new tab
-  Future<void> _launchURL(String url) async {
-    final Uri _url = Uri.parse(url);
-    if (!await launchUrl(_url)) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  // fungsi waktu sekarang
-  String currentTime() {
-    DateTime now = DateTime.now();
-    String currentTime = '${now.hour}:${now.minute}:${now.second}';
-    return currentTime;
-  }
-
-  // fungsi menampilkan zona dan jumlah
-  String formatAmount(String zone, double amount) {
-    String _amount = amount.toStringAsFixed(2);
-    return "Money in ${zone} : ${_amount}";  ;
-  }
-
-  //fungsi format time
-  String formatTime(String dateTimeString) {
-    DateTime dateTime = DateTime.parse(dateTimeString);
-    String day = dateTime.day.toString().padLeft(2, '0');
-    String month = dateTime.month.toString().padLeft(2, '0');
-    String year = dateTime.year.toString();
-    String hour = dateTime.hour.toString().padLeft(2, '0');
-    String minute = dateTime.minute.toString().padLeft(2, '0');
-    String second = dateTime.second.toString().padLeft(2, '0');
-    return '$day-$month-$year, $hour:$minute:$second WIB';
-  }
+  
 
 
   @override
@@ -275,7 +246,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
               ),
               SizedBox(height: 10),
               Text(
-                formatTime(widget.financialModel.createdAt!),
+                otherController.formatTime(widget.financialModel.createdAt!),
                 style: TextStyle(color: Colors.white, fontSize: 16),
                 textAlign: TextAlign.center,
               ),
@@ -339,7 +310,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
               ),
               SizedBox(height: 10),
               Text(
-                currentTime(),
+                otherController.currentTime(),
                 style: TextStyle(color: Colors.white, fontSize: 16),
                 textAlign: TextAlign.center,
               ),
@@ -438,7 +409,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                                   SizedBox(height: 10),
                                   ElevatedButton(
                                     onPressed: () {
-                                      _launchURL(
+                                      otherController.launchURL(
                                           'https://www.google.com/search?q=waktu+sekarang+di+${selectedCity}&sca_esv=274f1da98f794c68&sca_upv=1&rlz=1C1KNTJ_enID969ID969&sxsrf=ADLYWIJ7CGRmr8qNamIZzleQrIr6IcEgrQ%3A1716652008222&ei=6AdSZqaaDbOKnesPm_CX-Ak&ved=0ahUKEwimrpyJk6mGAxUzRWcHHRv4BZ8Q4dUDCBA&uact=5&oq=waktu+sekarang+di+eropa%2Famsterdam&gs_lp=Egxnd3Mtd2l6LXNlcnAiIXdha3R1IHNla2FyYW5nIGRpIGVyb3BhL2Ftc3RlcmRhbTIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYR0iKC1CDAliDAnABeAKQAQCYAQCgAQCqAQC4AQPIAQD4AQGYAgKgAg3CAgoQABiwAxjWBBhHmAMA4gMFEgExIECIBgGQBgiSBwEyoAcA&sclient=gws-wiz-serp');
                                     },
                                     child: Text('Check'),
@@ -553,7 +524,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                             ),
                             SizedBox(height: 10),
                             Text(
-                              formatAmount(selectedCurrency, amount),
+                              otherController.formatAmount(selectedCurrency, amount),
                               style: TextStyle(
                                 color: Color(0xFFF2EFCD),
                                 fontSize: 16,
@@ -562,7 +533,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                             SizedBox(height: 10),
                             ElevatedButton(
                               onPressed: () {
-                                _launchURL(
+                                otherController.launchURL(
                                     'https://www.google.com/search?q=${widget.financialModel.jml_uang!}+rupiah+berapa+${selectedCurrency}&sca_esv=c6cd4adb8e74364a&sca_upv=1&rlz=1C1KNTJ_enID969ID969&sxsrf=ADLYWIJv3PdcJZPsbpXu2TYezbz55hbn5Q%3A1716649550131&ei=Tv5RZsrOB_fvseMP57Wu-Ak&ved=0ahUKEwjKrY71iamGAxX3d2wGHeeaC58Q4dUDCBA&uact=5&oq=30000+rupiah+berapa+usd&gs_lp=Egxnd3Mtd2l6LXNlcnAiFzMwMDAwIHJ1cGlhaCBiZXJhcGEgdXNkMgYQABgWGB4yCBAAGIAEGKIEMggQABiABBiiBDIIEAAYgAQYogQyCBAAGIAEGKIESNZ0UItcWJRlcAV4AZABAJgB0QGgAaoJqgEFMC42LjK4AQPIAQD4AQGYAgygAtcIwgIKEAAYsAMY1gQYR8ICBBAjGCfCAggQABgHGB4YD8ICBhAAGAgYHsICCBAAGAcYCBgemAMAiAYBkAYIkgcFNS41LjKgB9Ih&sclient=gws-wiz-serp');
                               },
                               child: Text('Check'),
