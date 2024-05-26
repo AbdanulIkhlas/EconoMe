@@ -71,20 +71,6 @@ class DatabaseHelper {
     return await dbClient!.insert(finacialTable, financialModel.toMap());
   }
 
-  //read data pemasukan
-  Future<List?> getDataPemasukan() async {
-    var dbClient = await checkDB;
-    var result = await dbClient!.rawQuery('SELECT * FROM $finacialTable WHERE $financialTipe = ?', ['pemasukan']);
-    return result.toList();
-  }
-
-  //read data pengeluaran
-  Future<List?> getDataPengeluaran() async {
-    var dbClient = await checkDB;
-    var result = await dbClient!.rawQuery('SELECT * FROM $finacialTable WHERE $financialTipe = ?', ['pengeluaran']);
-    return result.toList();
-  }
-
   //read semua data finansial
   Future<List?> getAllDataTransaction() async {
     var dbClient = await checkDB;

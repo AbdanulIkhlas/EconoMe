@@ -12,14 +12,11 @@ class NoteController {
 
   Future<void> getTransactions(List<FinancialModel> listTransactions,
       Function(int) updateTotalIncome, Function(int) updateTotalExpense) async {
-    var incomeTransactions = await databaseHelper.getDataPemasukan();
-    var expenseTransactions = await databaseHelper.getDataPengeluaran();
+    var allData = await databaseHelper.getAllDataTransaction();
 
     listTransactions.clear();
     listTransactions.addAll(
-        incomeTransactions!.map((data) => FinancialModel.fromMap(data)));
-    listTransactions.addAll(
-        expenseTransactions!.map((data) => FinancialModel.fromMap(data)));
+        allData!.map((data) => FinancialModel.fromMap(data)));
 
     // Sort transactions by createdAt in descending order
     listTransactions.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
