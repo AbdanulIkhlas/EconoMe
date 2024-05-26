@@ -27,18 +27,24 @@ class DatabaseHelper {
 
   //cek apakah ada database
   Future<Database?> get checkDB async {
+    // Jika database sudah diinisialisasi, kembalikan database yang sudah ada
     if (_database != null) {
       return _database;
     }
+    // Jika belum, inisialisasi database
     _database = await _initDB();
     return _database;
   }
 
   Future<Database?> _initDB() async {
+    // Mendapatkan path direktori penyimpanan database
     String databasePath = await getDatabasesPath();
+    // Menentukan path lengkap untuk file database
     String path = join(databasePath, 'econome.db');
+    // Membuka atau membuat database baru dengan versi dan fungsi onCreate
     return await openDatabase(path, version: 1, onCreate: _onCreate);
   }
+
 
   //membuat tabel dan field-fieldnya
   Future<void> _onCreate(Database db, int version) async {
