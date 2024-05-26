@@ -14,37 +14,57 @@ class NoteController {
       Function(int) updateTotalIncome, Function(int) updateTotalExpense) async {
     var allData = await databaseHelper.getAllDataTransaction();
 
+    // Menghapus data transaksi yang ada dan menambahkan data baru dari database
     listTransactions.clear();
     listTransactions.addAll(
         allData!.map((data) => FinancialModel.fromMap(data)));
 
-    // Sort transactions by createdAt in descending order
+    // Mengurutkan transaksi berdasarkan createdAt secara menurun
     listTransactions.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 
+    // Menghitung total pendapatan dan pengeluaran
     final totalIncome = calculateTotalIncome(listTransactions);
     final totalExpense = calculateTotalExpense(listTransactions);
 
+    // Memperbarui total pendapatan dan pengeluaran
     updateTotalIncome(totalIncome);
     updateTotalExpense(totalExpense);
-  }
+}
+
 
   int calculateTotalIncome(List<FinancialModel> transactions) {
+    // Menghitung total pendapatan dari daftar transaksi
     return transactions
-        .where((transaction) => transaction.tipe == 'pemasukan')
-        .map((transaction) => int.parse(transaction.jml_uang!))
-        .fold(0, (sum, amount) => sum + amount);
+        .where((transaction) =>
+            transaction.tipe ==
+            'pemasukan') // Memfilter transaksi berdasarkan tipe 'pemasukan'
+        .map((transaction) => int.parse(
+            transaction.jml_uang!)) // Mengambil jumlah uang dari transaksi
+        .fold(
+            0,
+            (sum, amount) =>
+                sum + amount); // Menjumlahkan jumlah uang dari semua transaksi
   }
 
   int calculateTotalExpense(List<FinancialModel> transactions) {
+    // Menghitung total pengeluaran dari daftar transaksi
     return transactions
-        .where((transaction) => transaction.tipe == 'pengeluaran')
-        .map((transaction) => int.parse(transaction.jml_uang!))
-        .fold(0, (sum, amount) => sum + amount);
+        .where((transaction) =>
+            transaction.tipe ==
+            'pengeluaran') // Memfilter transaksi berdasarkan tipe 'pengeluaran'
+        .map((transaction) => int.parse(
+            transaction.jml_uang!)) // Mengambil jumlah uang dari transaksi
+        .fold(
+            0,
+            (sum, amount) =>
+                sum + amount); // Menjumlahkan jumlah uang dari semua transaksi
   }
 
   int calculateBalance(int totalIncome, int totalExpense) {
-    return totalIncome - totalExpense;
+    // Menghitung saldo yang tersisa
+    return totalIncome - totalExpense; // Selisih antara total pendapatan dan total pengeluaran
   }
+
 
   Future<void> navigateToDetail(BuildContext context,
       FinancialModel financialModel, Function updateTransactions) async {
@@ -91,16 +111,21 @@ class NoteController {
 
   String formatAmount(double amount) {
     if (amount < (-1000000000)) {
+      // Jika jumlah uang kurang dari -1 miliar, kembalikan 'Susah Hidup'
       return 'Susah Hidup';
     } else if (amount < 1000000) {
+      // Jika jumlah uang kurang dari 1 juta, gunakan fungsi convertToIdr untuk mengonversinya ke format rupiah
       return OtherController.convertToIdr(amount);
     } else if (amount < 1000000000) {
+      // Jika jumlah uang berada di antara 1 juta dan 1 miliar, bagi dengan 1 juta dan tambahkan 'Jt' di belakangnya
       double result = amount / 1000000;
       return OtherController.convertToIdr(result) + ' Jt';
     } else if (amount < 1000000000000) {
+      // Jika jumlah uang berada di antara 1 miliar dan 1 triliun, bagi dengan 1 miliar dan tambahkan 'M' di belakangnya
       double result = amount / 1000000000;
       return OtherController.convertToIdr(result) + ' M';
     } else {
+      // Jika jumlah uang lebih dari 1 triliun, bagi dengan 1 triliun dan tambahkan 'KB' di belakangnya
       double result = amount / 1000000000000;
       return OtherController.convertToIdr(result) + ' KB';
     }

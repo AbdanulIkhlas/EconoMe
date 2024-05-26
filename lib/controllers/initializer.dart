@@ -22,22 +22,26 @@ class _InitializerState extends State<Initializer> {
     final isAdminLoggedIn = await _authController.isLoggedIn();
 
     if (!isAdminExist) {
+      // Jika admin belum ada, arahkan ke regist
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => RegisterScreen()),
       );
     } else if (!isAdminLoggedIn) {
+      // Jika admin sudah ada tetapi belum masuk, arahkan ke  login
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),
       );
     } else {
+      // Jika admin sudah ada dan sudah masuk, arahkan ke page utama
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => BottomNavbar()),
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
