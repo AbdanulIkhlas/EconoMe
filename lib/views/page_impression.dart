@@ -82,7 +82,7 @@ class _PageImpressionState extends State<PageImpression>
               ),
               SizedBox(height: 10),
               Text(
-                'Matkul TPM ini menjadi salah satu matkul yang cukup menantang, karena sangat aktif, aktif dari segi penugasan, kuis, dan penugasan lagi. Namun dari tugas tugas yang diberikan yah cukup memberikan pengalaman dalam membuat aplikasi mobile.',
+                'Matkul TPM ini menjadi salah satu matkul yang cukup menantang, karena sangat aktif, aktif dari segi penugasan, kuis, dan penugasan lagi. Namun dari tugas tugas yang diberikan yah cukup memberikan pengalaman dalam membuat aplikasi mobile dan cukup membuat begadang berhari hari terutama yang Project Akhir ',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
