@@ -29,7 +29,7 @@ class OtherController {
   // fungsi menampilkan zona dan jumlah
   String formatAmount(String zone, double amount) {
     String _amount = amount.toStringAsFixed(2);
-    return "Money in ${zone} : ${_amount}";
+    return "Uang dalam ${zone} : ${_amount}";
   }
 
   //fungsi format time

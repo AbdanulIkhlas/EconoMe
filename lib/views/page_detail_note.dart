@@ -341,7 +341,7 @@ class _DetailNoteState extends State<DetailNote> {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
                   showDialog(
@@ -375,32 +375,32 @@ class _DetailNoteState extends State<DetailNote> {
                                 children: [
                                   if (time != null) ...[
                                     Text(
-                                      'Date: ${time['date']}',
+                                      'Tanggal: ${time['date']}',
                                       style: TextStyle(
                                           color: Color(0xFFF2EFCD),
                                           fontSize: 16),
                                     ),
                                     Text(
-                                      'Time: ${time['time']}',
+                                      'Waktu: ${time['time']}',
                                       style: TextStyle(
                                           color: Color(0xFFF2EFCD),
                                           fontSize: 16),
                                     ),
                                     Text(
-                                      'Timezone: ${time['timeZone']}',
+                                      'Zona: ${time['timeZone']}',
                                       style: TextStyle(
                                           color: Color(0xFFF2EFCD),
                                           fontSize: 16),
                                     ),
                                     Text(
-                                      'Day of Week: ${time['dayOfWeek']}',
+                                      'Hari: ${time['dayOfWeek']}',
                                       style: TextStyle(
                                           color: Color(0xFFF2EFCD),
                                           fontSize: 16),
                                     ),
                                   ] else
                                     Text(
-                                      'No data available',
+                                      'Gagal Konversi',
                                       style: TextStyle(
                                           color: Color(0xFFF2EFCD),
                                           fontSize: 16),
@@ -411,7 +411,7 @@ class _DetailNoteState extends State<DetailNote> {
                                       otherController.launchURL(
                                           'https://www.google.com/search?q=waktu+sekarang+di+${selectedCity}&sca_esv=274f1da98f794c68&sca_upv=1&rlz=1C1KNTJ_enID969ID969&sxsrf=ADLYWIJ7CGRmr8qNamIZzleQrIr6IcEgrQ%3A1716652008222&ei=6AdSZqaaDbOKnesPm_CX-Ak&ved=0ahUKEwimrpyJk6mGAxUzRWcHHRv4BZ8Q4dUDCBA&uact=5&oq=waktu+sekarang+di+eropa%2Famsterdam&gs_lp=Egxnd3Mtd2l6LXNlcnAiIXdha3R1IHNla2FyYW5nIGRpIGVyb3BhL2Ftc3RlcmRhbTIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYRzIEEAAYR0iKC1CDAliDAnABeAKQAQCYAQCgAQCqAQC4AQPIAQD4AQGYAgKgAg3CAgoQABiwAxjWBBhHmAMA4gMFEgExIECIBgGQBgiSBwEyoAcA&sclient=gws-wiz-serp');
                                     },
-                                    child: Text('Check'),
+                                    child: Text('Cek'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Color(0xFF424242),
                                       side: BorderSide(
@@ -446,7 +446,7 @@ class _DetailNoteState extends State<DetailNote> {
                   minimumSize: Size(double.infinity, 50),
                 ),
                 child: Text(
-                  'Show Selected City',
+                  'Tampilkan Konversi',
                   style: TextStyle(
                     color: Color(0xFFF2EFCD),
                   ),
@@ -456,7 +456,7 @@ class _DetailNoteState extends State<DetailNote> {
               
               
               
-              SizedBox(height: 20),
+              SizedBox(height: 30),
               Text(
                 'Konversi Uang:',
                 style: TextStyle(
@@ -516,7 +516,7 @@ class _DetailNoteState extends State<DetailNote> {
                             ),
                             SizedBox(height: 10),
                             Text(
-                              'Money in IDR : Rp ${widget.financialModel.jml_uang!}',
+                              'Uang dalam IDR : Rp ${widget.financialModel.jml_uang!}',
                               style: TextStyle(
                                 color: Color(0xFFF2EFCD),
                                 fontSize: 16,
@@ -536,7 +536,7 @@ class _DetailNoteState extends State<DetailNote> {
                                 otherController.launchURL(
                                     'https://www.google.com/search?q=${widget.financialModel.jml_uang!}+rupiah+berapa+${selectedCurrency}&sca_esv=c6cd4adb8e74364a&sca_upv=1&rlz=1C1KNTJ_enID969ID969&sxsrf=ADLYWIJv3PdcJZPsbpXu2TYezbz55hbn5Q%3A1716649550131&ei=Tv5RZsrOB_fvseMP57Wu-Ak&ved=0ahUKEwjKrY71iamGAxX3d2wGHeeaC58Q4dUDCBA&uact=5&oq=30000+rupiah+berapa+usd&gs_lp=Egxnd3Mtd2l6LXNlcnAiFzMwMDAwIHJ1cGlhaCBiZXJhcGEgdXNkMgYQABgWGB4yCBAAGIAEGKIEMggQABiABBiiBDIIEAAYgAQYogQyCBAAGIAEGKIESNZ0UItcWJRlcAV4AZABAJgB0QGgAaoJqgEFMC42LjK4AQPIAQD4AQGYAgygAtcIwgIKEAAYsAMY1gQYR8ICBBAjGCfCAggQABgHGB4YD8ICBhAAGAgYHsICCBAAGAcYCBgemAMAiAYBkAYIkgcFNS41LjKgB9Ih&sclient=gws-wiz-serp');
                               },
-                              child: Text('Check'),
+                              child: Text('Cek'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Color(0xFF424242),
                                 side: BorderSide(
@@ -566,7 +566,7 @@ class _DetailNoteState extends State<DetailNote> {
                   minimumSize: Size(double.infinity, 50),
                 ),
                 child: Text(
-                  'Show Selected Currency',
+                  'Konversi Mata Uang',
                   style: TextStyle(
                     color: Color(0xFFF2EFCD),
                   ),
