@@ -51,7 +51,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
             icon: _selectedIndex == 1
                 ? Icon(Icons.emoji_emotions)
                 : Icon(Icons.sentiment_very_satisfied),
-            label: 'Saran & Kesan',
+            label: 'Pesan & Kesan',
           ),
           BottomNavigationBarItem(
             icon: _selectedIndex == 2

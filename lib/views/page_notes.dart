@@ -80,7 +80,7 @@ class _PageNotesState extends State<PageNotes> {
             ? TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Cari transaksi...',
+                  hintText: 'Cari catatan...',
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Color(0xFFffffce)),
                 ),
