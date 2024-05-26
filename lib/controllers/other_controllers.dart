@@ -22,7 +22,7 @@ class OtherController {
   // fungsi waktu sekarang
   String currentTime() {
     DateTime now = DateTime.now();
-    String currentTime = '${now.hour}:${now.minute}:${now.second}';
+    String currentTime = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')} WIB';
     return currentTime;
   }
 
