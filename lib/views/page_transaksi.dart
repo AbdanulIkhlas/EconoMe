@@ -126,17 +126,33 @@ class _PageTransaksiState extends State<PageTransaksi> {
                   builder: (context) {
                     return AlertDialog(
                       backgroundColor: Color(0xFF424242),
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 24.0,
+                          vertical:
+                              20.0), // Atur padding horizontal dan vertikal
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          _infoItem('Pemasukan', totalIncome.toString(), Colors.green),
-                          _infoItem('Pengeluaran', totalExpense.toString(), Colors.red),
-                          _infoItem('Saldo', _transactionController.calculateBalance(totalIncome, totalExpense).toString(), _transactionController.calculateBalance(totalIncome, totalExpense) >= 0 ? Colors.green : Colors.red),
+                          _infoItem('Pemasukan', totalIncome.toString(),
+                              Colors.green),
+                          _infoItem('Pengeluaran', totalExpense.toString(),
+                              Colors.red),
+                          _infoItem(
+                              'Saldo',
+                              _transactionController
+                                  .calculateBalance(totalIncome, totalExpense)
+                                  .toString(),
+                              _transactionController.calculateBalance(
+                                          totalIncome, totalExpense) >=
+                                      0
+                                  ? Colors.green
+                                  : Colors.red),
                         ],
                       ),
                     );
                   },
                 );
+
               },
               child: Container(
                 padding: const EdgeInsets.all(10),
@@ -347,7 +363,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
           ),
         ),
         Text(
-          OtherController.convertToIdr(value),
+          OtherController.convertToIdr(double.parse(value)),
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
