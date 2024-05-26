@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import '../../database/DatabaseHelper.dart';
-import '../../decoration/format_rupiah.dart';
 import '../../model/financial_model.dart';
 import '../views/page_input_pemasukan.dart';
 import '../views/page_input_pengeluaran.dart';
 import '../views/page_detail_transaksi.dart';
+import '../controllers/other_controllers.dart';
 
 class TransactionController {
   final DatabaseHelper databaseHelper = DatabaseHelper();
+  final OtherController otherController = OtherController();
 
   Future<void> getTransactions(List<FinancialModel> listTransactions,
       Function(int) updateTotalIncome, Function(int) updateTotalExpense) async {
@@ -96,16 +97,16 @@ class TransactionController {
     if (amount < (-1000000000)) {
       return 'Susah Hidup';
     } else if (amount < 1000000) {
-      return CurrencyFormat.convertToIdr(amount);
+      return OtherController.convertToIdr(amount);
     } else if (amount < 1000000000) {
       double result = amount / 1000000;
-      return CurrencyFormat.convertToIdr(result) + ' Jt';
+      return OtherController.convertToIdr(result) + ' Jt';
     } else if (amount < 1000000000000) {
       double result = amount / 1000000000;
-      return CurrencyFormat.convertToIdr(result) + ' M';
+      return OtherController.convertToIdr(result) + ' M';
     } else {
       double result = amount / 1000000000000;
-      return CurrencyFormat.convertToIdr(result) + ' KB';
+      return OtherController.convertToIdr(result) + ' KB';
     }
   }
 

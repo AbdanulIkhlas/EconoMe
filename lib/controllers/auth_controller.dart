@@ -6,18 +6,51 @@ import '../views/bottom_navbar.dart';
 
 class AuthController {
   final AdminService _adminService = AdminService();
+  static const int _cipherKey = 5;
+
+  String _encryptPassword(String password) {
+    String encryptedPassword = '';
+    for (int i = 0; i < password.length; i++) {
+      int charCode = password.codeUnitAt(i);
+      if (charCode >= 65 && charCode <= 90) {
+        encryptedPassword +=
+            String.fromCharCode((charCode - 65 + _cipherKey) % 26 + 65);
+      } else if (charCode >= 97 && charCode <= 122) {
+        encryptedPassword +=
+            String.fromCharCode((charCode - 97 + _cipherKey) % 26 + 97);
+      } else {
+        encryptedPassword += password[i];
+      }
+    }
+    return encryptedPassword;
+  }
+
+  String _decryptPassword(String encryptedPassword) {
+    String decryptedPassword = '';
+    for (int i = 0; i < encryptedPassword.length; i++) {
+      int charCode = encryptedPassword.codeUnitAt(i);
+      if (charCode >= 65 && charCode <= 90) {
+        decryptedPassword +=
+            String.fromCharCode((charCode - 65 - _cipherKey) % 26 + 65);
+      } else if (charCode >= 97 && charCode <= 122) {
+        decryptedPassword +=
+            String.fromCharCode((charCode - 97 - _cipherKey) % 26 + 97);
+      } else {
+        decryptedPassword += encryptedPassword[i];
+      }
+    }
+    return decryptedPassword;
+  }
 
   Future<void> login(
       BuildContext context, String username, String password) async {
     try {
-      final response = await _adminService.verifyLogin(username, password);
+      final response =
+          await _adminService.verifyLogin(username, _encryptPassword(password));
       if (response != null) {
         final prefs = await SharedPreferences.getInstance();
         prefs.setInt('admin_id', response.id);
         prefs.setString('admin_username', response.username);
-        // prefs.setString('admin', response);
-        String? username = prefs.getString('admin_username');
-        print(username);
         print('Login successful');
         Navigator.pushReplacement(
           context,
@@ -59,9 +92,12 @@ class AuthController {
     }
   }
 
-  Future<void> register(BuildContext context, username, String password) async {
+  Future<void> register(
+      BuildContext context, String username, String password) async {
     try {
-      final response = await _adminService.register(username, password);
+      final encryptedPassword = _encryptPassword(password);
+      final response =
+          await _adminService.register(username, encryptedPassword);
       if (response) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -90,9 +126,28 @@ class AuthController {
     }
   }
 
+  String getEncryptedPassword(String password) {
+    return _encryptPassword(password);
+  }
+
+  String getDecryptedPassword(String encryptedPassword) {
+    return _decryptPassword(encryptedPassword);
+  }
+
+  Future<String?> getUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('admin_username');
+  }
+
+  Future<String?> getEncryptedPasswordFromDB(String username) async {
+    final encryptedPassword =
+        await _adminService.getPasswordByUsername(username);
+    return encryptedPassword;
+  }
+
   void logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
+    await prefs.clear();
 
     Navigator.pushReplacement(
       context,

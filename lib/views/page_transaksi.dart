@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../model/financial_model.dart';
 import '../controllers/transaction_controller.dart';
+import '../controllers/other_controllers.dart';
 
 class PageTransaksi extends StatefulWidget {
   const PageTransaksi({Key? key}) : super(key: key);
@@ -11,13 +12,22 @@ class PageTransaksi extends StatefulWidget {
 
 class _PageTransaksiState extends State<PageTransaksi> {
   final List<FinancialModel> listTransactions = [];
+  final List<FinancialModel> _filteredTransactions = [];
   final TransactionController _transactionController = TransactionController();
+  final OtherController otherController = OtherController();
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
   int totalIncome = 0;
   int totalExpense = 0;
 
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(_filterTransactions);
+    _fetchTransactions();
+  }
+
+  void _fetchTransactions() {
     _transactionController.getTransactions(
       listTransactions,
       (income) {
@@ -30,7 +40,34 @@ class _PageTransaksiState extends State<PageTransaksi> {
           totalExpense = expense;
         });
       },
-    );
+    ).then((_) {
+      setState(() {
+        _filteredTransactions.clear();
+        _filteredTransactions.addAll(listTransactions);
+      });
+    });
+  }
+
+  void _filterTransactions() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        _filteredTransactions.clear();
+        _filteredTransactions.addAll(listTransactions);
+      } else {
+        _filteredTransactions.clear();
+        _filteredTransactions.addAll(listTransactions.where((transaction) {
+          return transaction.keterangan!.toLowerCase().contains(query) ||
+              transaction.tanggal!.toLowerCase().contains(query);
+        }).toList());
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -39,129 +76,179 @@ class _PageTransaksiState extends State<PageTransaksi> {
       backgroundColor: Color(0xFF424242),
       appBar: AppBar(
         backgroundColor: Color(0xFF585752),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Image.asset(
-                'assets/text-logo.png',
-                height: 30,
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Cari transaksi...',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Color(0xFFffffce)),
+                ),
+                style: TextStyle(color: Color(0xFFffffce), fontSize: 18),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Image.asset(
+                      'assets/text-logo.png',
+                      height: 30,
+                    ),
+                  ),
+                ],
               ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isSearching ? Icons.close : Icons.search,
+              color: Color(0xFFffffce),
             ),
-            Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: Image.asset(
-                'assets/logo.png',
-                height: 60,
-              ),
-            ),
-          ],
-        ),
+            onPressed: () {
+              setState(() {
+                if (_isSearching) {
+                  _searchController.clear();
+                }
+                _isSearching = !_isSearching;
+              });
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Color(0xFF585752),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
-                    spreadRadius: 3,
-                    blurRadius: 7,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        'Pemasukan',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      backgroundColor: Color(0xFF424242),
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 24.0,
+                          vertical:
+                              20.0), // Atur padding horizontal dan vertikal
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _infoItem('Pemasukan', totalIncome.toString(),
+                              Colors.green),
+                          _infoItem('Pengeluaran', totalExpense.toString(),
+                              Colors.red),
+                          _infoItem(
+                              'Saldo',
+                              _transactionController
+                                  .calculateBalance(totalIncome, totalExpense)
+                                  .toString(),
+                              _transactionController.calculateBalance(
+                                          totalIncome, totalExpense) >=
+                                      0
+                                  ? Colors.green
+                                  : Colors.red),
+                        ],
                       ),
-                      Text(
-                        _transactionController
-                            .formatAmount(totalIncome.toDouble()),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                    );
+                  },
+                );
+
+              },
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Color(0xFF585752),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5),
+                      spreadRadius: 3,
+                      blurRadius: 7,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          'Pemasukan',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFffffce),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        'Pengeluaran',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                        Text(
+                          _transactionController
+                              .formatAmount(totalIncome.toDouble()),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
                         ),
-                      ),
-                      Text(
-                        _transactionController
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          'Pengeluaran',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFffffce),
+                          ),
+                        ),
+                        Text(
+                          _transactionController
                             .formatAmount(totalExpense.toDouble()),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        'Saldo',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          'Saldo',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFffffce),
+                          ),
                         ),
-                      ),
-                      Text(
-                        _transactionController.formatAmount(
+                        Text(
+                          _transactionController.formatAmount(
                             _transactionController.calculateBalance(
                                 totalIncome, totalExpense).toDouble()),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: _transactionController.calculateBalance(
-                                      totalIncome, totalExpense) >=
-                                  0
-                              ? Colors.green
-                              : Colors.red,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: _transactionController.calculateBalance(totalIncome, totalExpense) >= 0 ? Colors.green : Colors.red,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 20),
-            listTransactions.isEmpty
+            _filteredTransactions.isEmpty
                 ? Container(
-                    padding:
-                        EdgeInsets.only(left: 10, right: 10, top: 200),
+                    padding: EdgeInsets.only(left: 10, right: 10, top: 200),
                     child: Center(
                       child: Text(
                         'Ups, belum ada catatan.\nYuk catat keuangan Kamu!',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Color(0xFFffffce),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -170,9 +257,9 @@ class _PageTransaksiState extends State<PageTransaksi> {
                 : ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: listTransactions.length,
+                    itemCount: _filteredTransactions.length,
                     itemBuilder: (context, index) {
-                      FinancialModel transaction = listTransactions[index];
+                      FinancialModel transaction = _filteredTransactions[index];
                       return GestureDetector(
                         onTap: () {
                           _transactionController.navigateToDetail(
@@ -263,17 +350,33 @@ class _PageTransaksiState extends State<PageTransaksi> {
     );
   }
 
+  Widget _infoItem(String title, String value, Color textColor) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFFffffce),
+          ),
+        ),
+        Text(
+          OtherController.convertToIdr(double.parse(value)),
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        ),
+      ],
+    );
+  }
+
   void _updateTransactions() {
     setState(() {
-      _transactionController.getTransactions(
-        listTransactions,
-        (income) {
-          totalIncome = income;
-        },
-        (expense) {
-          totalExpense = expense;
-        },
-      );
+      _fetchTransactions();
     });
   }
 }

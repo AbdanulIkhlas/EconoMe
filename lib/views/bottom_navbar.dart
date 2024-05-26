@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'page_kesan.dart';
-import 'pengeluaran/page_pengeluaran.dart';
 import 'page_profile.dart';
 import 'page_transaksi.dart';
 
@@ -18,8 +17,8 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
   static List<Widget> _widgetOptions = <Widget>[
     PageTransaksi(),
+    PesanKesanPage(),
     ProfilePage(),
-    PagePengeluaran(),
   ];
 
   @override
@@ -50,15 +49,15 @@ class _BottomNavbarState extends State<BottomNavbar> {
           ),
           BottomNavigationBarItem(
             icon: _selectedIndex == 1
-                ? Icon(Icons.person_pin)
-                : Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: _selectedIndex == 2
                 ? Icon(Icons.emoji_emotions)
                 : Icon(Icons.sentiment_very_satisfied),
             label: 'Saran & Kesan',
+          ),
+          BottomNavigationBarItem(
+            icon: _selectedIndex == 2
+                ? Icon(Icons.person_pin)
+                : Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,

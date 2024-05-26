@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import './views/pemasukan/page_pemasukan.dart';
-import './views/pengeluaran/page_pengeluaran.dart';
-import './views/bottom_navbar.dart';
 import 'controllers/initializer.dart';
 
 // Definisikan warna utama
@@ -34,18 +31,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _widgetOptions = <Widget>[
-    PagePemasukan(),
-    PagePengeluaran(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
