@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../model/financial_model.dart';
-import '../controllers/transaction_controller.dart';
+import '../controllers/note_controller.dart';
 import '../controllers/other_controllers.dart';
 
-class PageTransaksi extends StatefulWidget {
-  const PageTransaksi({Key? key}) : super(key: key);
+class PageNotes extends StatefulWidget {
+  const PageNotes({Key? key}) : super(key: key);
 
   @override
-  State<PageTransaksi> createState() => _PageTransaksiState();
+  State<PageNotes> createState() => _PageNotesState();
 }
 
-class _PageTransaksiState extends State<PageTransaksi> {
+class _PageNotesState extends State<PageNotes> {
   final List<FinancialModel> listTransactions = [];
   final List<FinancialModel> _filteredTransactions = [];
-  final TransactionController _transactionController = TransactionController();
+  final NoteController _noteController = NoteController();
   final OtherController otherController = OtherController();
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
@@ -28,7 +28,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
   }
 
   void _fetchTransactions() {
-    _transactionController.getTransactions(
+    _noteController.getTransactions(
       listTransactions,
       (income) {
         setState(() {
@@ -139,10 +139,10 @@ class _PageTransaksiState extends State<PageTransaksi> {
                               Colors.red),
                           _infoItem(
                               'Saldo',
-                              _transactionController
+                              _noteController
                                   .calculateBalance(totalIncome, totalExpense)
                                   .toString(),
-                              _transactionController.calculateBalance(
+                              _noteController.calculateBalance(
                                           totalIncome, totalExpense) >=
                                       0
                                   ? Colors.green
@@ -181,7 +181,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                           ),
                         ),
                         Text(
-                          _transactionController
+                          _noteController
                               .formatAmount(totalIncome.toDouble()),
                           style: TextStyle(
                             fontSize: 14,
@@ -202,7 +202,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                           ),
                         ),
                         Text(
-                          _transactionController
+                          _noteController
                             .formatAmount(totalExpense.toDouble()),
                           style: TextStyle(
                             fontSize: 14,
@@ -223,13 +223,13 @@ class _PageTransaksiState extends State<PageTransaksi> {
                           ),
                         ),
                         Text(
-                          _transactionController.formatAmount(
-                            _transactionController.calculateBalance(
+                          _noteController.formatAmount(
+                            _noteController.calculateBalance(
                                 totalIncome, totalExpense).toDouble()),
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: _transactionController.calculateBalance(totalIncome, totalExpense) >= 0 ? Colors.green : Colors.red,
+                            color: _noteController.calculateBalance(totalIncome, totalExpense) >= 0 ? Colors.green : Colors.red,
                           ),
                         ),
                       ],
@@ -262,7 +262,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                       FinancialModel transaction = _filteredTransactions[index];
                       return GestureDetector(
                         onTap: () {
-                          _transactionController.navigateToDetail(
+                          _noteController.navigateToDetail(
                               context, transaction, _updateTransactions);
                         },
                         child: Padding(
@@ -311,7 +311,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
                                   Container(
                                     width: 130,
                                     child: Text(
-                                      _transactionController.formatAmount(
+                                      _noteController.formatAmount(
                                           int.parse(transaction.jml_uang!)
                                               .toDouble()),
                                       style: TextStyle(
@@ -341,7 +341,7 @@ class _PageTransaksiState extends State<PageTransaksi> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _transactionController.showOptions(context, _updateTransactions);
+          _noteController.showOptions(context, _updateTransactions);
         },
         child: Icon(Icons.add),
         backgroundColor: Color(0xFF585752),

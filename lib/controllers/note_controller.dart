@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import '../../database/DatabaseHelper.dart';
 import '../../model/financial_model.dart';
 import '../views/page_input_pemasukan.dart';
 import '../views/page_input_pengeluaran.dart';
-import '../views/page_detail_transaksi.dart';
+import '../views/page_detail_note.dart';
 import '../controllers/other_controllers.dart';
 
-class TransactionController {
+class NoteController {
   final DatabaseHelper databaseHelper = DatabaseHelper();
   final OtherController otherController = OtherController();
 
@@ -55,7 +54,7 @@ class TransactionController {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DetailTransaksi(financialModel: financialModel),
+        builder: (context) => DetailNote(financialModel: financialModel),
       ),
     );
 

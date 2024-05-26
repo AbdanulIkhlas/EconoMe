@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'page_kesan.dart';
 import 'page_profile.dart';
-import 'page_transaksi.dart';
+import 'page_notes.dart';
 
 class BottomNavbar extends StatefulWidget {
   final int selectedIndex;
@@ -16,7 +16,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
   int _selectedIndex = 0;
 
   static List<Widget> _widgetOptions = <Widget>[
-    PageTransaksi(),
+    PageNotes(),
     PesanKesanPage(),
     ProfilePage(),
   ];
@@ -45,7 +45,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
             icon: _selectedIndex == 0
                 ? Icon(Icons.request_quote)
                 : Icon(Icons.request_quote_outlined),
-            label: 'Transaksi',
+            label: 'Catatan',
           ),
           BottomNavigationBarItem(
             icon: _selectedIndex == 1

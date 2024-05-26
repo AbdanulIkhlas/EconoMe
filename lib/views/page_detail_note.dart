@@ -7,17 +7,17 @@ import 'bottom_navbar.dart';
 import '../services/base_network.dart';
 import '../controllers/other_controllers.dart';
 
-class DetailTransaksi extends StatefulWidget {
+class DetailNote extends StatefulWidget {
   final FinancialModel financialModel;
 
-  const DetailTransaksi({Key? key, required this.financialModel})
+  const DetailNote({Key? key, required this.financialModel})
       : super(key: key);
 
   @override
-  _DetailTransaksiState createState() => _DetailTransaksiState();
+  _DetailNoteState createState() => _DetailNoteState();
 }
 
-class _DetailTransaksiState extends State<DetailTransaksi> {
+class _DetailNoteState extends State<DetailNote> {
   DatabaseHelper databaseHelper = DatabaseHelper();
   FinancialModel financialModel = FinancialModel();
   OtherController otherController = OtherController();

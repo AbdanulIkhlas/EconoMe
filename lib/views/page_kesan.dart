@@ -77,6 +77,7 @@ class _PesanKesanPageState extends State<PesanKesanPage>
                 style: TextStyle(
                   fontSize: 24,
                   color: Color(0xFFF4F5CA),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 10),
@@ -94,6 +95,7 @@ class _PesanKesanPageState extends State<PesanKesanPage>
                 style: TextStyle(
                   fontSize: 24,
                   color: Color(0xFFF4F5CA),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 10),
