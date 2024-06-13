@@ -10,8 +10,7 @@ import '../controllers/other_controllers.dart';
 class DetailNote extends StatefulWidget {
   final FinancialModel financialModel;
 
-  const DetailNote({Key? key, required this.financialModel})
-      : super(key: key);
+  const DetailNote({Key? key, required this.financialModel}) : super(key: key);
 
   @override
   _DetailNoteState createState() => _DetailNoteState();
@@ -25,14 +24,20 @@ class _DetailNoteState extends State<DetailNote> {
   int strJmlUang = 0;
   int strCheckDatabase = 0;
   double selectedRate = 1.0;
+  // Variabel untuk menyimpan zona waktu yang dipilih, awalnya diatur ke 'Europe/London'.
   String selectedCity = 'Europe/London';
+  // Variabel untuk menyimpan mata uang yang dipilih, awalnya diatur ke 'USD'.
   String selectedCurrency = 'USD';
+  // List yang akan digunakan untuk menyimpan daftar zona waktu yang dapat diambil dari sumber data.
   List<dynamic> timezones = [];
+  // Variabel dinamis yang mungkin digunakan untuk menyimpan data waktu yang telah diambil dari sumber data.
   dynamic times = [];
-  Map<String,dynamic> currencies = {};
-  bool _isLoadingTimezone = true;
-  bool _isLoadingCurrency = true;
-
+  // Map yang akan digunakan untuk menyimpan data mata uang yang dapat diambil dari sumber data.
+  Map<String, dynamic> currencies = {};
+  bool _isLoadingTimezone =
+      true; // Boolean yang menunjukkan apakah sedang dalam proses memuat zona waktu dari sumber data atau tidak. Awalnya diatur ke true.
+  bool _isLoadingCurrency =
+      true; // Boolean yang menunjukkan apakah sedang dalam proses memuat data mata uang dari sumber data atau tidak. Awalnya diatur ke true.
 
   @override
   void initState() {
@@ -44,34 +49,46 @@ class _DetailNoteState extends State<DetailNote> {
 
   void loadTimezones() async {
     try {
+      // Memanggil metode fetchTimezone dari BaseNetwork untuk mengambil data zona waktu
       List<dynamic> _timezones = await BaseNetwork().fetchTimezone();
+
+      // Mengupdate state dengan data zona waktu yang telah diambil dan menghentikan indikator loading
       setState(() {
         timezones = _timezones;
         _isLoadingTimezone = false;
       });
     } catch (e) {
+      // Menangani kesalahan jika ada, mencetak kesalahan ke konsol dan menghentikan indikator loading
       print("error loadTimezone ${e}");
       setState(() {
         _isLoadingTimezone = false;
       });
+
+      // Menampilkan snackbar dengan pesan kesalahan kepada pengguna
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("error loadTimezone ${e}"),
       ));
     }
   }
-  
+
   void loadCurrency() async {
     try {
-      Map<String,dynamic> _currencies = await BaseNetwork().fetchCurrency();
+      // Memanggil metode fetchCurrency dari BaseNetwork untuk mengambil data mata uang
+      Map<String, dynamic> _currencies = await BaseNetwork().fetchCurrency();
+
+      // Mengupdate state dengan data mata uang yang telah diambil dan menghentikan indikator loading
       setState(() {
         currencies = _currencies;
         _isLoadingCurrency = false;
       });
     } catch (e) {
+      // Menangani kesalahan jika ada, mencetak kesalahan ke konsol dan menghentikan indikator loading
       print("error loadCurrency ${e}");
       setState(() {
         _isLoadingCurrency = false;
       });
+
+      // Menampilkan snackbar dengan pesan kesalahan kepada pengguna
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("error loadCurrency ${e}"),
       ));
@@ -80,17 +97,21 @@ class _DetailNoteState extends State<DetailNote> {
 
   Future<dynamic> loadTime(String zone) async {
     try {
+      // Memanggil metode fetchTime dari BaseNetwork untuk mengambil data waktu berdasarkan zona waktu
       dynamic _times = await BaseNetwork().fetchTime(zone);
+
+      // Mengupdate state dengan data waktu yang telah diambil
       setState(() {
         times = _times;
-        // _isLoadingCurrency = false;
       });
+
+      // Mengembalikan data waktu
       return _times;
     } catch (e) {
+      // Menangani kesalahan jika ada, mencetak kesalahan ke konsol
       print("error loadTimes ${e}");
-      // setState(() {
-      //   // _isLoadingCurrency = false;
-      // });
+
+      // Menampilkan snackbar dengan pesan kesalahan kepada pengguna
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("error loadTimes ${e}"),
       ));
@@ -153,9 +174,6 @@ class _DetailNoteState extends State<DetailNote> {
   Future<void> updateData() async {
     await getDatabase();
   }
-
-  
-
 
   @override
   Widget build(BuildContext context) {
@@ -302,10 +320,9 @@ class _DetailNoteState extends State<DetailNote> {
               Text(
                 'Konversi Waktu',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold
-                ),
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               Text(
@@ -348,7 +365,7 @@ class _DetailNoteState extends State<DetailNote> {
                     context: context,
                     builder: (context) {
                       return FutureBuilder(
-                         // Panggil metode _loadTime dengan parameter selectedCity
+                        // Panggil metode _loadTime dengan parameter selectedCity
                         future: loadTime(selectedCity),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -366,7 +383,7 @@ class _DetailNoteState extends State<DetailNote> {
                             );
                           } else {
                             // Tampilkan data jika berhasil dimuat
-                            final Map<String,dynamic> times = snapshot.data!;
+                            final Map<String, dynamic> times = snapshot.data!;
                             final time = times.isNotEmpty ? times : null;
                             return AlertDialog(
                               backgroundColor: Color(0xFF424242),
@@ -433,7 +450,6 @@ class _DetailNoteState extends State<DetailNote> {
                       );
                     },
                   );
-                
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF424242),
@@ -452,18 +468,13 @@ class _DetailNoteState extends State<DetailNote> {
                   ),
                 ),
               ),
-
-              
-              
-              
               SizedBox(height: 30),
               Text(
                 'Konversi Uang:',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold
-                ),
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               Text(
@@ -475,24 +486,32 @@ class _DetailNoteState extends State<DetailNote> {
                 ),
               ),
               SizedBox(height: 20),
-              DropdownButton<String>(
-                value: selectedCurrency,
-                dropdownColor: Color(0xFF424242),
-                style: TextStyle(color: Color(0xFFF2EFCD)),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedCurrency = newValue!;
-                    selectedRate = currencies[newValue]!;
-                  });
-                },
-                items: currencies.keys
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
+DropdownButton<String>(
+  // Nilai yang sedang dipilih saat ini dalam dropdown.
+  value: selectedCurrency, 
+  // Warna latar belakang dropdown.
+  dropdownColor: Color(0xFF424242), 
+  style: TextStyle(
+      // Gaya teks untuk teks yang dipilih.
+      color: Color(0xFFF2EFCD)), 
+  onChanged: (String? newValue) {
+    // Callback yang dipanggil saat pengguna mengubah nilai dropdown.
+    setState(() {
+      // Mengupdate nilai selectedCurrency dengan nilai baru yang dipilih.
+      selectedCurrency = newValue!; 
+      // Mengupdate selectedRate dengan nilai kurs mata uang yang dipilih.
+      selectedRate = currencies[newValue]!; 
+    });
+  },
+  items: currencies.keys
+      .map<DropdownMenuItem<String>>((String value) {
+    return DropdownMenuItem<String>(
+      value:value, // Nilai yang akan di-set jika item ini dipilih.
+      child: Text(value), // Tampilan teks dari item dropdown.
+    );
+    // Mengonversi daftar items menjadi List<DropdownMenuItem<String>>.
+  }).toList(), 
+),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -524,7 +543,8 @@ class _DetailNoteState extends State<DetailNote> {
                             ),
                             SizedBox(height: 10),
                             Text(
-                              otherController.formatAmount(selectedCurrency, amount),
+                              otherController.formatAmount(
+                                  selectedCurrency, amount),
                               style: TextStyle(
                                 color: Color(0xFFF2EFCD),
                                 fontSize: 16,
@@ -572,8 +592,6 @@ class _DetailNoteState extends State<DetailNote> {
                   ),
                 ),
               ),
-            
-            
             ],
           ),
         ),
